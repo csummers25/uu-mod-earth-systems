@@ -42,6 +42,8 @@ def initialize_markers(markers, materials, params, xsize, ysize):
     
     # marker number index
     mm = 0
+    xx, yy = np.meshgrid(markers.xnum, markers.ynum)
+    points = np.vstack((xx.ravel(), yy.ravel())).T
     
     for j in range(0,markers.xnum):
         for i in range(0,markers.ynum):
@@ -50,71 +52,66 @@ def initialize_markers(markers, materials, params, xsize, ysize):
             markers.x[mm] = (j + np.random.random())*mxstp
             markers.y[mm] = (i + np.random.random())*mystp
             
-            # now define rock type based on location, to give our initial setup
+
             
-            # asthenosphere
-            markers.id[mm] = 5
+            # glacier
+            if markers.y[mm] >= topography_curve(markers.x[mm]) and markers.y[mm] < ice_curve(markers.x[mm]):
+               markers.id[mm]  = 6
+               markers.T[mm] = 253
+
             
-            # sticky air
-            if (markers.y[mm] <= 10000):
-                markers.id[mm] = 0
-            
-            # continental lithosphere
-            if (markers.y[mm]>7000 and markers.y[mm]<= 12000):
-                markers.id[mm] = 7
-            if (markers.y[mm]>12000 and markers.y[mm]<=17000):
-                markers.id[mm] = 8
-            if (markers.y[mm]>17000 and markers.y[mm]<= 22000):
-                markers.id[mm] = 7
-            # lower cont crust
-            if (markers.y[mm]>22000 and markers.y[mm]<= 27000):
-                markers.id[mm] = 9
-            if (markers.y[mm]>27000 and markers.y[mm]<= 32000):
-                markers.id[mm] = 10
-            if (markers.y[mm]>32000 and markers.y[mm]<= 37000):
-                markers.id[mm] = 9
-            # lithospheric mantle, default is 5, we add stripes of 4
-            if (markers.y[mm]>42000 and markers.y[mm]<= 47000):
+            # air
+            if (markers.y[mm] >= ice_curve(markers.x[mm])):
+                dtdy = 0.65/1000 # approximate adiabetic lapse rate for the air K/m
                 markers.id[mm] = 4
-            if (markers.y[mm]>52000 and markers.y[mm]<= 57000):
-                markers.id[mm] = 4
-            if (markers.y[mm]>62000 and markers.y[mm]<= 67000):
-                markers.id[mm] = 4
-            if (markers.y[mm]>72000 and markers.y[mm]<= 77000):
-                markers.id[mm] = 4
-            if (markers.y[mm]>82000 and markers.y[mm]<= 87000):
-                markers.id[mm] = 4
-            if (markers.y[mm]>92000 and markers.y[mm]<= 97000):
-                markers.id[mm] = 4
+                markers.T[mm] = 253 + dtdy * (ysize-markers.y[mm])
             
-            # initial temperature structure
-            # adiabatic T gradient in asthenosphere
-            dtdy = 0.5/1000 # K/m
-            markers.T[mm] = params.T_bot - dtdy*(ysize - markers.y[mm])
+            # bedrock
+            if markers.y[mm] < topography_curve(markers.x[mm]):
+               markers.id[mm] = 5
+               markers.T[mm] = 273
+
+
             
-            # if in the air
-            if (markers.id[mm]==0):
-                # cons T
-                markers.T[mm] = params.T_top
-            
-            # linear continental geotherm
-            y_asth = 97000
-            T_asth = params.T_bot - dtdy*(ysize - y_asth)
-            if (markers.y[mm] > 7000 and markers.y[mm]<y_asth):
-                markers.T[mm] = params.T_top + (T_asth - params.T_top)*(markers.y[mm] - 7000)/(y_asth - 7000)
-            
-            # seed to start localisation in center of model
-            # using a thermal perturbation
-            dx = markers.x[mm] - xsize/2
-            dy = markers.y[mm] - 40000
-            radius = np.sqrt(dx**2 + dy**2)
-            if (radius<50000):
-                markers.T[mm] = markers.T[mm] + 60*(1-radius/50000)
-            
-            
+
             # update marker index
             mm +=1
+
+def topography_curve(x): 
+    '''
+    Sets up the curve of the bedrock on which the glacier lays
+    Parameters
+    ----------
+    x : TYPE
+        DESCRIPTION.
+
+    Returns
+    -------
+    None.
+
+    '''
+    a = 2_000_000
+    b = 800
+    return  a / (x + b)
+
+
+
+def ice_curve(x):
+    '''
+    Sets up the curve of the initial height of the glacier
+    Parameters
+    ----------
+    x : TYPE
+        DESCRIPTION.
+
+    Returns
+    -------
+    None.
+
+    '''
     
+    return -7.0e-5 * (x+3000)**2 + 3000 
+
     
 def initializeModel():
     '''
