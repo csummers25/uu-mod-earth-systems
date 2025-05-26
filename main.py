@@ -31,8 +31,9 @@ from physics.grid_fns import updateStresses, viscElastStress, strainRateComps, g
 from visualisation import plotAVar, plotSeveralVars, plotMarkerFields, basicGridVelocities
 
 # load the setup fn for the chosen model
-from models.lithosphereExtension.setup import initializeModel
+#from models.lithosphereExtension.setup import initializeModel
 
+from models.mountainGlacier.setup import initializeModel
 
 
 
