@@ -210,6 +210,10 @@ def initializeModel():
     # file path must be from top directory (as that is where the fn is called from!)
     matData = np.loadtxt('./models/mountainGlacier/material_properties.txt', skiprows=3, delimiter=",")
     materials = Materials(matData)
+    
+    
+    # For the materials, we in fact only need 3? Air, ice and bedrock 
+    
 
     # create directories for output of figures and data (not atm)
     pathlib.Path('./Figures').mkdir(exist_ok=True)
