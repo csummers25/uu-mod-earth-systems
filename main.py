@@ -13,6 +13,7 @@ from numba import jit
 from copy import deepcopy
 from time import time
 import os
+import matplotlib.pyplot as plt
 
 # if debugging, this should be 1 AND jitclass tags in dataStructures must be commented out!
 os.environ["NUMBA_DISABLE_JIT"] = "0"
@@ -137,6 +138,9 @@ for nt in range(0, params.ntstp_max):
     # right boundary
     grid.T[:,xnum-1] = BT_right[:,0] + BT_right[:,1]*grid.T[:,xnum-2]
     
+    
+    plt.imshow(grid.T)
+    plt.tight_layout() 
     # then interpolate back to markers - only if it is t=0!
     if (time_curr==0):
         gridToMarker([grid.T], [markers.T], markers.x, markers.y, markers.nx, markers.ny, grid)

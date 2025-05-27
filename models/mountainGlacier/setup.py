@@ -54,30 +54,41 @@ def initialize_markers(markers, materials, params, xsize, ysize):
             
 
             
-            # glacier
-            if markers.y[mm] >= topography_curve(markers.x[mm]) and markers.y[mm] < ice_curve(markers.x[mm]):
-               markers.id[mm]  = 6
-               markers.T[mm] = 253
+            # # glacier
+            # if markers.y[mm] >= topography_curve(markers.x[mm]) and markers.y[mm] < ice_curve(markers.x[mm]):
+            #     markers.id[mm]  = 1
+            #     markers.T[mm] = 253
 
             
-            # air
-            if (markers.y[mm] >= ice_curve(markers.x[mm])):
-                dtdy = 0.65/1000 # approximate adiabetic lapse rate for the air K/m
-                markers.id[mm] = 4
-                markers.T[mm] = 253 + dtdy * (ysize-markers.y[mm])
+            # # air
+            # if (markers.y[mm] >= ice_curve(markers.x[mm])):
+            #     dtdy = 0.65/1000 # approximate adiabetic lapse rate for the air K/m
+            #     markers.id[mm] = 0
+            #     markers.T[mm] = 253 + dtdy * (ysize-markers.y[mm])
             
             # bedrock
-            if markers.y[mm] < topography_curve(markers.x[mm]):
-               markers.id[mm] = 5
-               markers.T[mm] = 273
+            if markers.y[mm] >= topography_curve(markers.x[mm], xsize, ysize):
+                markers.id[mm] = 2
+                markers.T[mm] = 273
 
-
+            elif markers.y[mm] <= ice_curve(markers.x[mm], xsize, ysize):
+                markers.id[mm] = 1
+                markers.T[mm] = 263
             
+            else: 
+                dtdy = 0.65/1000 # approximate adiabetic lapse rate for the air K/m
+                markers.id[mm] = 0 
+                markers.T[mm] = 1000 + dtdy * (ysize-markers.y[mm])
+
+
+            # grid somehow stops at 1/3 and air temp is not getting in correctly
 
             # update marker index
             mm +=1
 
-def topography_curve(x): 
+
+
+def topography_curve(x, xsize, ysize): 
     '''
     Sets up the curve of the bedrock on which the glacier lays, takes form of a concave up decreasing curve
     Hard-coded, dependent on grid size but have not yet implemented this
@@ -91,13 +102,13 @@ def topography_curve(x):
     None.
 
     '''
-    a = 2_000_000
-    b = 800
-    return  a / (x + b)
+    a = ysize / (xsize ** 2)  # ensures curve drops from ysize to 0
+    curve_y =  a * (x - 0)**2  # h = 0, k = 0
+    return curve_y 
 
 
 
-def ice_curve(x):
+def ice_curve(x, xsize, ysize):
     '''
     Sets up the curve of the initial height of the glacier, takes the form of a concave down decreasing curve
     Hard-coded, dependent on grid size but have not yet implemented this 
@@ -111,8 +122,10 @@ def ice_curve(x):
     None.
 
     '''
+    a = ysize / (xsize ** 2) 
+    curve_y = 3 * ysize / (xsize ** 2) * x**2 + ysize
     
-    return -7.0e-5 * (x+3000)**2 + 3000 
+    return curve_y 
 
     
 def initializeModel():
@@ -194,15 +207,15 @@ def initializeModel():
     
     # additional model options 
     # initial system size
-    xsize0 = 4000 
-    ysize0 = 3000
+    xsize0 = 400000
+    ysize0 = 300000
     
     xsize = xsize0
     ysize = ysize0
 
     # set resolution
-    xnum = 1610
-    ynum = 610
+    xnum = 610
+    ynum = 61
 
 
     # instantiate/load material properties object
@@ -228,12 +241,12 @@ def initializeModel():
     B_top[:,1] = 1
 
     B_bottom = np.zeros((xnum+1,4))
-    B_bottom[:,1] = 1
-    B_bottom[:,2] = -params.v_ext/xsize * ysize
+    # B_bottom[:,1] = 1
+    # B_bottom[:,2] = -params.v_ext/xsize * ysize
 
     B_left = np.zeros((ynum+1,4))
-    B_left[:,0] = -params.v_ext/2
-    B_left[:,3] = 1
+    # B_left[:,0] = -params.v_ext/2
+    # B_left[:,3] = 1
 
     B_right = np.zeros((ynum+1,4))
     B_right[:,0] = params.v_ext/2
@@ -255,8 +268,8 @@ def initializeModel():
     BT_bottom[:,0] = params.T_bot
 
     # left and right = insulating?
-    BT_left[:,1] = 1
-    BT_right[:,1] = 1
+    # BT_left[:,1] = 1
+    # BT_right[:,1] = 1
 
     ###########################################################################
     # create grid object
