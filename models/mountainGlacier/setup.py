@@ -79,7 +79,8 @@ def initialize_markers(markers, materials, params, xsize, ysize):
 
 def topography_curve(x): 
     '''
-    Sets up the curve of the bedrock on which the glacier lays
+    Sets up the curve of the bedrock on which the glacier lays, takes form of a concave up decreasing curve
+    Hard-coded, dependent on grid size but have not yet implemented this
     Parameters
     ----------
     x : TYPE
@@ -98,7 +99,8 @@ def topography_curve(x):
 
 def ice_curve(x):
     '''
-    Sets up the curve of the initial height of the glacier
+    Sets up the curve of the initial height of the glacier, takes the form of a concave down decreasing curve
+    Hard-coded, dependent on grid size but have not yet implemented this 
     Parameters
     ----------
     x : TYPE
