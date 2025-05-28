@@ -13,6 +13,7 @@ from numba import jit
 from copy import deepcopy
 from time import time
 import os
+import matplotlib.pyplot as plt
 
 # if debugging, this should be 1 AND jitclass tags in dataStructures must be commented out!
 os.environ["NUMBA_DISABLE_JIT"] = "0"
@@ -31,8 +32,9 @@ from physics.grid_fns import updateStresses, viscElastStress, strainRateComps, g
 from visualisation import plotAVar, plotSeveralVars, plotMarkerFields, basicGridVelocities
 
 # load the setup fn for the chosen model
-from models.lithosphereExtension.setup import initializeModel
+#from models.lithosphereExtension.setup import initializeModel
 
+from models.mountainGlacier.setup import initializeModel
 
 
 
@@ -136,10 +138,15 @@ for nt in range(0, params.ntstp_max):
     # right boundary
     grid.T[:,xnum-1] = BT_right[:,0] + BT_right[:,1]*grid.T[:,xnum-2]
     
+
+    
     # then interpolate back to markers - only if it is t=0!
     if (time_curr==0):
         gridToMarker([grid.T], [markers.T], markers.x, markers.y, markers.nx, markers.ny, grid)
     
+    
+    plt.imshow(grid.T, vmin=230, vmax=280)
+    plt.title('Temperature')
     # compute viscoelastic visc and stress
     viscElastStress(grid, grid0, timestep, xnum, ynum)
                 
