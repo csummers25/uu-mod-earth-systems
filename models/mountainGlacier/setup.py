@@ -54,31 +54,22 @@ def initialize_markers(markers, materials, params, xsize, ysize):
             
 
             
-            # # glacier
-            # if markers.y[mm] >= topography_curve(markers.x[mm]) and markers.y[mm] < ice_curve(markers.x[mm]):
-            #     markers.id[mm]  = 1
-            #     markers.T[mm] = 253
 
-            
-            # # air
-            # if (markers.y[mm] >= ice_curve(markers.x[mm])):
-            #     dtdy = 0.65/1000 # approximate adiabetic lapse rate for the air K/m
-            #     markers.id[mm] = 0
-            #     markers.T[mm] = 253 + dtdy * (ysize-markers.y[mm])
-            print(ice_curve(markers.x[mm], xsize, ysize))
             # bedrock
             if markers.y[mm] >= topography_curve(markers.x[mm], xsize, ysize):
                 markers.id[mm] = 2
                 markers.T[mm] = 273
 
+            # glacier
             elif markers.y[mm] >= ice_curve(markers.x[mm], xsize, ysize):
                 markers.id[mm] = 1
                 markers.T[mm] = 263
             
+            # air but lapse rate doesnt really seem to work how I want it to work
             else: 
-                dtdy = 0.65/1000000 # approximate adiabetic lapse rate for the air K/m
+                dtdy = 0.65/1000 # approximate adiabetic lapse rate for the air K/m
                 markers.id[mm] = 0 
-                markers.T[mm] = 253
+                markers.T[mm] = 253 - dtdy*(ysize - markers.y[mm])
 
         
 
