@@ -65,7 +65,10 @@ def initialize_markers(markers, materials, params, xsize, ysize):
                 markers.id[mm] = 1
                 markers.T[mm] = 263
             
-            # air but lapse rate doesnt really seem to work how I want it to work
+            
+
+            
+            # air         
             else: 
                 dtdy = 0.65/1000 # approximate adiabetic lapse rate for the air K/m
                 markers.id[mm] = 0 
@@ -95,8 +98,8 @@ def topography_curve(x, xsize, ysize):
     None.
 
     '''
-    a = ysize / (xsize ** 2)  # ensures curve drops from ysize to 0
-    curve_y =  a * (x)**2  # h = 0, k = 0
+    a = 1.5 * ysize / (xsize ** 2)  # ensures curve drops from ysize to 0
+    curve_y =  a * (x)**2 + ysize/4 # h = 0, k = 0
     return curve_y 
 
 
@@ -116,7 +119,7 @@ def ice_curve(x, xsize, ysize):
 
     '''
     a = ysize / (xsize ** 2) 
-    curve_y = ysize / (xsize ** 2) * x**2 - ysize/7
+    curve_y = ysize / (xsize ** 2) * x**2 + ysize/6
     
     return curve_y 
 
@@ -200,16 +203,22 @@ def initializeModel():
     
     # additional model options 
     # initial system size
-    xsize0 = 400000
-    ysize0 = 300000
+    xsize0 = 4000
+    ysize0 = 1500
     
     xsize = xsize0
     ysize = ysize0
 
     # set resolution
-    xnum = 610
+    xnum = 161
     ynum = 61
 
+    params.bx = xsize/(xnum-1)
+    params.by = ysize/(ynum-1)
+    params.Nx = 0
+    params.Ny = 0
+    params.non_uni_xsize = 0
+    
 
     # instantiate/load material properties object
     # file path must be from top directory (as that is where the fn is called from!)
@@ -234,7 +243,7 @@ def initializeModel():
     B_top[:,1] = 1
 
     B_bottom = np.zeros((xnum+1,4))
-    # B_bottom[:,1] = 1
+    B_bottom[:,1] = 1
     # B_bottom[:,2] = -params.v_ext/xsize * ysize
 
     B_left = np.zeros((ynum+1,4))
