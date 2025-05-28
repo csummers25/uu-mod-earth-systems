@@ -65,20 +65,22 @@ def initialize_markers(markers, materials, params, xsize, ysize):
             #     dtdy = 0.65/1000 # approximate adiabetic lapse rate for the air K/m
             #     markers.id[mm] = 0
             #     markers.T[mm] = 253 + dtdy * (ysize-markers.y[mm])
-            
+            print(ice_curve(markers.x[mm], xsize, ysize))
             # bedrock
             if markers.y[mm] >= topography_curve(markers.x[mm], xsize, ysize):
                 markers.id[mm] = 2
                 markers.T[mm] = 273
 
-            elif markers.y[mm] <= ice_curve(markers.x[mm], xsize, ysize):
+            elif markers.y[mm] >= ice_curve(markers.x[mm], xsize, ysize):
                 markers.id[mm] = 1
                 markers.T[mm] = 263
             
             else: 
-                dtdy = 0.65/1000 # approximate adiabetic lapse rate for the air K/m
+                dtdy = 0.65/1000000 # approximate adiabetic lapse rate for the air K/m
                 markers.id[mm] = 0 
-                markers.T[mm] = 1000 + dtdy * (ysize-markers.y[mm])
+                markers.T[mm] = 253
+
+        
 
 
             # grid somehow stops at 1/3 and air temp is not getting in correctly
@@ -103,7 +105,7 @@ def topography_curve(x, xsize, ysize):
 
     '''
     a = ysize / (xsize ** 2)  # ensures curve drops from ysize to 0
-    curve_y =  a * (x - 0)**2  # h = 0, k = 0
+    curve_y =  a * (x)**2  # h = 0, k = 0
     return curve_y 
 
 
@@ -123,7 +125,7 @@ def ice_curve(x, xsize, ysize):
 
     '''
     a = ysize / (xsize ** 2) 
-    curve_y = 3 * ysize / (xsize ** 2) * x**2 + ysize
+    curve_y = ysize / (xsize ** 2) * x**2 - ysize/7
     
     return curve_y 
 

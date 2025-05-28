@@ -138,13 +138,15 @@ for nt in range(0, params.ntstp_max):
     # right boundary
     grid.T[:,xnum-1] = BT_right[:,0] + BT_right[:,1]*grid.T[:,xnum-2]
     
+
     
-    plt.imshow(grid.T)
-    plt.tight_layout() 
     # then interpolate back to markers - only if it is t=0!
     if (time_curr==0):
         gridToMarker([grid.T], [markers.T], markers.x, markers.y, markers.nx, markers.ny, grid)
     
+    
+    plt.imshow(grid.T, vmin=230, vmax=280)
+    plt.title('Temperature')
     # compute viscoelastic visc and stress
     viscElastStress(grid, grid0, timestep, xnum, ynum)
                 
