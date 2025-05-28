@@ -98,7 +98,7 @@ def initializeModel():
 
 
     # instantiate/load material properties object
-    matData = np.loadtxt('./models/simpleStokesTest/material_properties_simple.txt', skiprows=3, delimiter=",")
+    matData = np.loadtxt('./models/simpleStokesTest/material_properties_simple.txt', delimiter=",")
     materials = Materials(matData) 
 
     # output options

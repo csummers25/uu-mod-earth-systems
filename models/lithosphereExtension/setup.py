@@ -198,7 +198,7 @@ def initializeModel():
 
     # instantiate/load material properties object
     # file path must be from top directory (as that is where the fn is called from!)
-    matData = np.loadtxt('./models/lithosphereExtension/material_properties.txt', skiprows=3, delimiter=",")
+    matData = np.loadtxt('./models/lithosphereExtension/material_properties.txt', delimiter=",")
     materials = Materials(matData)
 
     # create directories for output of figures and data (not atm)

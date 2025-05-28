@@ -180,6 +180,7 @@ class Materials():
         # viscosity model parameters
         # 0 - choice of viscosity model (0 = constant visc, 1 = power law)
         # 1 - viscosity for constant model
+        # power law visc, eta = Ad * sigma**n * exp(-(Ea + Va*P)/RT)
         # 2 - Ad
         # 3 - n
         # 4 - Ea
@@ -190,12 +191,15 @@ class Materials():
         self.mu = materialData[:,9] 
         
         # plasticity parameters
-        # 0 - C0
-        # 1 - C1
-        # 2 - sin(FI0)
-        # 3 - sin(FI1)
-        # 4 - Gamma0
-        # 5 - Gamma1
+        # for details see eqns 14.10-12 in Gerya
+        
+        # 0 - C0 - cohesion, pre strain weakening
+        # 1 - C1 - cohesion, post strain weakening
+        # 2 - sin(FI0) - internal friction, pre-stain weakening 
+        # 3 - sin(FI1) - internal friction, post-strain weakening
+        # 4 - Gamma0 - for sig_ii < Gamma0, cohesion and friction = C0, sin(F0)
+        # 	       for gamma0 < sigii < gamma1, coh, frict given by eqn 14.10
+        # 5 - Gamma1 - for sigii > Gamma1, cohesion and friction = C0, sin(F0)
         self.plast = materialData[:,10:16]
         
         # Specific heat capacity
