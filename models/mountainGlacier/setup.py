@@ -270,8 +270,8 @@ def initializeModel():
     BT_bottom[:,0] = params.T_bot
 
     # left and right = insulating?
-    # BT_left[:,1] = 1
-    # BT_right[:,1] = 1
+    BT_left[:,1] = 1
+    BT_right[:,1] = 1
 
     ###########################################################################
     # create grid object
