@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+"""
+Stokes and Continuity equations solver.  
 
+Uses scipy's sparse arrays and sparse direct matrix solver to solve the Stokes and Continuity equations in 2D.
+
+"""
 import numpy as np
 from scipy.sparse import bsr_matrix, csr_matrix, coo_array
 from scipy.sparse.linalg import spsolve
@@ -765,7 +770,7 @@ def StokesContinuitySolver(P_first, eta_s, eta_n, xnum, ynum, gridx, gridy, R_x,
 @jit
 def calculateResiduals(xnum, ynum, xstp, xstpc, ystp, ystpc, eta_s, eta_n, vx, vy, P, R_x, R_y, R_C, B_intern):
     '''
-    
+    Calculates the residuals of the Stoke's solver.
 
     Parameters
     ----------

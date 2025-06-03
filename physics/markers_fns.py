@@ -1,18 +1,18 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-functions that relate to marker physics,
+Functions that relate to marker physics,
 including interpolation of quantities to/from the grid,
 marker viscosity calculation, subgrid stress/diffusion
 
-lower level functions for marker operations, including getting nearest node 
-distances, interpolating a value to/from markers, etc. are in markerUtils.py
+Lower level functions for marker operations, including getting nearest node 
+distances, interpolating a value to/from markers, etc. are in markerUtils.
 
 """
 import numpy as np
 from numba import jit
 
-from dataStructures import Markers, Materials, Grid, Parameters
+from dataStructures import Markers, Materials, Grid
 from physics.markerUtils import applyGridContrib, applyMarkerContrib,\
     getMarkerNodeDistances, findNearestNode, applyGridWeights
 
@@ -173,8 +173,8 @@ def markerViscosity(markers, materials, m, grid, params, ntstp, tstep, plast_y):
         
         # check marker temp
         T_pow_law = markers.T[m]
-        if (T_pow_law < params.T_top):
-            T_pow_law = params.T_top
+        if (T_pow_law < params.T_min):
+            T_pow_law = params.T_min
         
         # compute exponential term
         pow_law_exp = (materials.visc[mID,4] + materials.visc[mID,5]*markers.P[m])/(params.Rgas*T_pow_law)
@@ -512,6 +512,7 @@ def subgridDiffusion(grid, markers, params, xnum, ynum, timestep, xstp_av, ystp_
         Average grid spacing in x-direction.
     ystp_av : FLOAT
         Average grid spacing in y-direction.
+    
     Returns
     -------
     dTn : ARRAY

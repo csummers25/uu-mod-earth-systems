@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Visualisation routines
+Visualisation routines for plotting code output
 
 """
 import matplotlib.pyplot as plt

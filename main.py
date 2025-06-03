@@ -20,7 +20,7 @@ os.environ["NUMBA_DISABLE_JIT"] = "0"
 debug = 0
 
 # load the component fucntions from their respective files
-from dataStructures import Markers, Materials, Grid, Parameters, copyGrid
+from dataStructures import Markers, Materials, Grid, copyGrid
 
 from physics.StokesContinuitySolver import StokesContinuitySolver, constructStokesRHS
 from physics.TemperatureSolver import TemperatureSolver, constructTempRHS
@@ -31,7 +31,7 @@ from physics.grid_fns import updateStresses, viscElastStress, strainRateComps, g
 from visualisation import plotAVar, plotSeveralVars, plotMarkerFields, basicGridVelocities
 
 # load the setup fn for the chosen model
-from models.lithosphereExtension.setup import initializeModel
+from models.lithosphereExtension.setup import initializeModel, Parameters
 
 
 
