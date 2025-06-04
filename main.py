@@ -17,7 +17,7 @@ import os
 # if debugging, this should be 1 AND jitclass tags in dataStructures must be commented out!
 os.environ["NUMBA_DISABLE_JIT"] = "0"
 # if 1 prints out extra statements at various places in the timeloop
-debug = 0
+debug = 1
 
 # load the component fucntions from their respective files
 from dataStructures import Markers, Materials, Grid, Parameters, copyGrid
@@ -31,7 +31,7 @@ from physics.grid_fns import updateStresses, viscElastStress, strainRateComps, g
 from visualisation import plotAVar, plotSeveralVars, plotMarkerFields, basicGridVelocities
 
 # load the setup fn for the chosen model
-from models.lithosphereExtension.setup import initializeModel
+from models.Subduction.setup import initializeModel
 
 
 
@@ -140,7 +140,7 @@ for nt in range(0, params.ntstp_max):
     if (time_curr==0):
         gridToMarker([grid.T], [markers.T], markers.x, markers.y, markers.nx, markers.ny, grid)
     
-    # compute viscoelastic visc and stress
+    # compute viscoelastic visc and stress    
     viscElastStress(grid, grid0, timestep, xnum, ynum)
                 
     # Compute RHS of Stokes+cont
@@ -297,8 +297,8 @@ for nt in range(0, params.ntstp_max):
         print('updating grid spacings')
     
     # update grid positions based on extension
-    ysize += -params.v_ext/xsize*ysize*timestep
-    xsize += params.v_ext*timestep
+    # ysize += -params.v_ext/xsize*ysize*timestep
+    # xsize += params.v_ext*timestep
     
     gridSpacings(params.bx, params.by, params.Nx, params.Ny, params.non_uni_xsize, xsize, ysize, grid, time_curr)
     

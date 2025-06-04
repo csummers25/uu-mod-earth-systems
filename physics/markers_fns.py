@@ -120,6 +120,10 @@ def markersToGrid(markers, materials, grid, grid0, xnum, ynum, params, tstep, nt
             grid.mu_n[yn,xn] += wij*m_mu*mwt
             grid.sigxx[yn,xn] += wij*markers.sigmaxx[m]*mwt
             grid.wt_eta_n[yn, xn] += wij*mwt
+
+        print(np.min(grid.eta_n))
+        print(np.min(grid.mu_n))
+        print(np.min(grid.sgxx))
             
     # finally, use weights to calculate the new grid values
     applyGridWeights(xnum, ynum, grid, grid0)

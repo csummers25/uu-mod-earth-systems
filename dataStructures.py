@@ -54,7 +54,7 @@ class Parameters():
         # physical model setup
         self.T_top = 273                        # temperature at the top face of the model (K)
         self.T_bot = 1750                       # temperature at the bottom face of the model (K)
-        self.v_ext = 2.0/(100*365.25*24*3600)   # extension velocity of the grid (cm/yr)
+        self.v_ext = 0 #2.0/(100*365.25*24*3600)   # extension velocity of the grid (cm/yr)
         
         # viscosity model
         self.eta_min = 1e18                     # minimum viscosity
@@ -65,15 +65,15 @@ class Parameters():
         
         
         # timestepping
-        self.t_end = 72e3/self.v_ext            # end time
-        self.ntstp_max = 360                    # maximum number of timesteps
+        self.t_end = 6E6*(365.24*24*3600)      #72e3/self.v_ext            # end time
+        self.ntstp_max = 10                   # maximum number of timesteps - 360
         self.Temp_stp_max = 20                  # maximum number of temperature substeps
         
         self.tstp_max = 1e4*365.25*24*3600      # maximum timestep
         
         # marker options
-        self.marker_max = 0.3                   # maximum marker movement per timestep (fraction of av. grid step)
-        self.marker_sch = 4                     # marker scheme 0 = no movement, 1 = Euler, 4=RK4
+        self.marker_max = 0.1                   # maximum marker movement per timestep (fraction of av. grid step)
+        self.marker_sch = 1                     # marker scheme 0 = no movement, 1 = Euler, 4=RK4
         
         self.movemode = 0                       # velocity calculation 0 = momentum eqn, 1 = solid body (not working currently)
         
@@ -93,8 +93,8 @@ class Parameters():
         self.non_uni_xsize = 100000             # physical x-size of non-uniform grid region
         
         # output options
-        self.save_output = 50                        # number of steps between output files
-        self.save_fig = 20                            # number of steps between figure output
+        self.save_output = 50*2                        # number of steps between output files
+        self.save_fig = 1                           # number of steps between figure output
 
 
 spec_mark = [
