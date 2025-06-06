@@ -159,12 +159,12 @@ def plotSeveralVars(grid, vxb, vyb, L_x, L_y, ntstp, t_curr):
     axs[1,1].set(xlabel='x (km)')         
     
     # T
-    im = axs[0,2].pcolor(X, Y, grid.T, shading='nearest',vmin=273, vmax=1800)
+    im = axs[0,2].pcolor(X, Y, grid.T-273, shading='nearest',vmin=273, vmax=1800)
     fig.colorbar(im, ax=axs[0,2],pad=0.0) # display colorbar
-    axs[0,2].set_title('Temperature')     # set plot title
+    axs[0,2].set_title('Temperature (C)')     # set plot title
 
     # sigxy
-    im = axs[1,2].pcolor(X, Y, np.log10(grid.eta_s),vmin=18, vmax=25)
+    im = axs[1,2].pcolor(X, Y, np.log10(grid.eta_s),vmin=18, vmax=28)
     fig.colorbar(im, ax=axs[1,2],pad=0.0) # display colorbar
     axs[1,2].set_title('Viscosity')     # set plot title
     
@@ -209,12 +209,14 @@ def plotMarkerFields(xsize, ysize, markers, grid, ntstp, t_curr):
     im = axs[0].imshow(mark_com, origin='upper', aspect='auto', extent=[0,xsize,ysize,0])
     fig.colorbar(im, ax=axs[0],pad=0.0) # display colorbar
     axs[0].set_title('Lithology')     # set plot title
-    axs[0].set(ylabel='y (m)', xlim=(50e3,350e3), ylim=(80e3,0))
+    axs[0].set(ylabel='y (m)', xlim=(0e3, 450e3), ylim=(200e3, 0))
+    #axs[0].set(ylabel='y (m)', xlim=(50e3,350e3), ylim=(80e3,0))
     
     im = axs[1].imshow(np.log10(mark_gii), origin='upper', aspect='auto', extent=[0,xsize,ysize,0], vmin=-2, vmax=2)
     fig.colorbar(im, ax=axs[1],pad=0.0) # display colorbar
     axs[1].set_title('Strain')     # set plot title
-    axs[1].set(xlabel='x (m)', ylabel='y (m)', xlim=(50e3,350e3), ylim=(150e3,0))
+    axs[1].set(xlabel='x (m)', ylabel = 'y (m)',  xlim=(0e3, 450e3), ylim=(200e3, 0))
+    #axs[1].set(xlabel='x (m)', ylabel='y (m)', xlim=(50e3,350e3), ylim=(150e3,0))
     
     fig.suptitle('Time: %.3f Myr'%(t_curr*1e-6/(365.25*24*3600)))
     
