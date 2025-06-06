@@ -69,7 +69,8 @@ instance/
 .scrapy
 
 # Sphinx documentation
-docs/_build/
+docs/build/
+docs/source/generated/
 
 # PyBuilder
 .pybuilder/
@@ -177,3 +178,6 @@ cython_debug/
 # stuff specific to this repo
 Figures/
 Outputs/
+
+# thing that appeareared once
+.DS_Store

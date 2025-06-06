@@ -12,13 +12,7 @@ Various model setups can be found in the `models` directory.  In each sub-direct
 To run a given setup, change the import statement for the `initializeModel` function in `main.py` to point to the directory of the model you wish to run.  For example, to run the model in the directory `lithosphereExtension`, we change the import statement in `main.py` to `from models.lithosphereExtension.setup import initializeModel`.
 
 ## Creating your own model
-To create your own setup, you must create a new directory in `models` and populate it with an implementation of `setup.py` and `material_properties*.txt`.  `setup.py` must contain the function `initializeModel` (see the docstring of the example implementations for details on what it should return), which sets the initial conditions, boundary conditions and parameter values for the simulation.  We recommend that you start by copying an existing `setup.py` and then modifying it for your own implementation.
-
-## Authors
-__Charlotte Summers__  
-Research Support Officer, Department of Earth Sciences
-Utrecht University 
-email: c.summers [at] uu.nl  
+To create your own setup, you must create a new directory in `models` and populate it with an implementation of `setup.py` and `material_properties*.txt`.  `setup.py` must contain the function `initializeModel` (see the docstring of the example implementations for details on what it should return), which sets the initial conditions, boundary conditions and parameter values for the simulation.  We recommend that you start by copying an existing `setup.py` and then modifying it for your own implementation. 
 
 ## References
 [1] Gerya T. MATLAB program examples. In: Introduction to Numerical Geodynamic Modelling. Cambridge University Press; 2019:425-437. DOI: https://doi.org/10.1017/9781316534243.024 
