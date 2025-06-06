@@ -178,3 +178,6 @@ cython_debug/
 # stuff specific to this repo
 Figures/
 Outputs/
+
+# thing that appeareared once
+.DS_Store

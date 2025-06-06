@@ -84,7 +84,7 @@ def plotAVar(grid, vxb, vyb, L_x, L_y, ntstp, t_curr):
     im = axs.pcolor(X, Y, grid.rho, shading='nearest', vmin=1000, vmax=3300)
     fig.colorbar(im, ax=axs,pad=0.0) # display colorbar
     axs.set_title('Density')     # set plot title
-    axs.set(ylabel='y (km)')         # label the y-axis (shared axis for x)
+    axs.set(ylabel='y (m)',xlabel='x (m)')         # label the y-axis (shared axis for x)
     qu = axs.quiver(grid.x, grid.y, vxb[:yres,:], np.flip(-vyb[:,:xres],0)) 
     axs.invert_yaxis()
 
@@ -136,7 +136,7 @@ def plotSeveralVars(grid, vxb, vyb, L_x, L_y, ntstp, t_curr):
     im = axs[0,0].pcolor(X, Y, grid.rho, shading='nearest', vmin=1000, vmax=3300)
     fig.colorbar(im, ax=axs[0,0],pad=0.0) # display colorbar
     axs[0,0].set_title('Density')     # set plot title
-    axs[0,0].set(ylabel='y (km)')         # label the y-axis (shared axis for x)
+    axs[0,0].set(ylabel='y (m)')         # label the y-axis (shared axis for x)
     
     qu = axs[0,0].quiver(grid.x, grid.y, vxb[:yres,:], np.flip(-vyb[:,:xres],0)) 
     axs[0,0].invert_yaxis()
@@ -150,13 +150,13 @@ def plotSeveralVars(grid, vxb, vyb, L_x, L_y, ntstp, t_curr):
     im = axs[1,0].pcolor(X, Y, vxb, shading='nearest',vmin=-5e-10, vmax=5e-10)
     fig.colorbar(im, ax=axs[1,0],pad=0.0) # display colorbar
     axs[1,0].set_title('Vx')     # set plot title
-    axs[1,0].set(ylabel='y (km)', xlabel='x (km)')         # label the y-axis (shared axis for x)
+    axs[1,0].set(ylabel='y (m)', xlabel='x (m)')         # label the y-axis (shared axis for x)
 
     # plot vy as colormap
     im = axs[1,1].pcolor(X, Y, vyb, shading='nearest',vmin=-5e-10, vmax=5e-10)
     fig.colorbar(im, ax=axs[1,1],pad=0.0) # display colorbar
     axs[1,1].set_title('Vy')     # set plot title
-    axs[1,1].set(xlabel='x (km)')         
+    axs[1,1].set(xlabel='x (m)')         
     
     # T
     im = axs[0,2].pcolor(X, Y, grid.T, shading='nearest',vmin=273, vmax=1800)
@@ -167,6 +167,7 @@ def plotSeveralVars(grid, vxb, vyb, L_x, L_y, ntstp, t_curr):
     im = axs[1,2].pcolor(X, Y, np.log10(grid.eta_s),vmin=18, vmax=25)
     fig.colorbar(im, ax=axs[1,2],pad=0.0) # display colorbar
     axs[1,2].set_title('Viscosity')     # set plot title
+    axs[1,2].set(xlabel='x (m)') 
     
     fig.suptitle('Time: %.3f Myr'%(t_curr*1e-6/(365.25*24*3600)))
 

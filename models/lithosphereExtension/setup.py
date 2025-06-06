@@ -163,10 +163,10 @@ def initializeModel():
         Array defining optional internal boundary eg. moving wall. Format is:
         B_intern[0] = x-index of vx nodes with prescribed velocity (-1 is not in use)
         B_intern[1-2] = min/max y-index of the wall
-        B_intern[4] = prescribed x-velocity value.
-        B_intern[5] = y-index of vy nodes with prescribed velocity (-1 is not in use)
-        B_intern[6-7] = min/max x-index of the wall
-        B_intern[8] = prescribed y-velocity value.
+        B_intern[3] = prescribed x-velocity value.
+        B_intern[4] = x-index of vy nodes with prescribed velocity (-1 is not in use)
+        B_intern[5-6] = min/max y-index of the wall
+        B_intern[7] = prescribed y-velocity value.
     BT_top : ARRAY
         Top temperature BCs.  Array has 2 columns, values in each are defined as:
         T[i,j] = BT_top[0] + BT_top[1]*T[i+1,j]
