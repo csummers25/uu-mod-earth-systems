@@ -57,47 +57,52 @@ def initialize_markers(markers, materials, params, xsize, ysize):
             markers.id[mm] = 5
             
             # sticky air
-            if (markers.y[mm] <= 20000):
+            if (markers.y[mm] <= 10000):
                 markers.id[mm] = 0
 
             # Sediments
-            if (markers.y[mm] > 20000 and markers.y[mm] <= 21000):
+            if (markers.y[mm] > 10000 and markers.y[mm] <= 11000):
                 markers.id[mm] = 1
             # Basaltic crust 
-            if (markers.y[mm] > 21000 and markers.y[mm] <= 23000):
+            if (markers.y[mm] > 11000 and markers.y[mm] <= 13000):
                 markers.id[mm] = 2
             # Gabbroic crust
-            if (markers.y[mm] > 23000 and markers.y[mm] <= 28000):
+            if (markers.y[mm] > 13000 and markers.y[mm] <= 18000):
                 markers.id[mm] = 3
             # Lithospheric mantle
-            if (markers.y[mm] > 28000 and markers.y[mm] < 90000):
+            if (markers.y[mm] > 18000 and markers.y[mm] < 90000):
                 markers.id[mm] = 4
-            # Left continent
+            # Continent
             # Upper continental crust
-            if (markers.x[mm] < 350000 and markers.y[mm] > 17000 and markers.y[mm] < 37000):
+            if (markers.x[mm] < 200000 and markers.y[mm] > 7000 and markers.y[mm] < 27000):
                 markers.id[mm] = 7
-            if (markers.x[mm] >= 350000 and markers.x[mm] < 400000 and  markers.y[mm] > 17000 + (markers.x[mm]-350000)/50000*3000 and markers.y[mm] < 42000 - (markers.x[mm]-350000)/50000*14000):
+            if (markers.x[mm] >= 200000 and markers.x[mm] < 250000 and  markers.y[mm] > 7000 + (markers.x[mm]-200000)/50000*3000 and markers.y[mm] < 32000 - (markers.x[mm]-200000)/50000*14000):
                 markers.id[mm] = 7
-            if (markers.x[mm] < 350000 and markers.y[mm] > 21000 and markers.y[mm] < 25000):
+            if (markers.x[mm] < 200000 and markers.y[mm] > 11000 and markers.y[mm] < 15000):
                 markers.id[mm] = 8
-            if (markers.x[mm] < 350000 and markers.y[mm] > 29000 and markers.y[mm] < 33000):
+            if (markers.x[mm] < 200000 and markers.y[mm] > 19000 and markers.y[mm] < 23000):
                 markers.id[mm] = 8
             # lower cont crust
-            if (markers.x[mm] < 350000 and markers.y[mm] > 37000 and markers.y[mm] < 52000):
+            if (markers.x[mm] < 200000 and markers.y[mm] > 27000 and markers.y[mm] < 42000):
                 markers.id[mm] = 9
-            if (markers.x[mm] < 350000 and markers.y[mm] > 42000 and markers.y[mm] < 47000):
+            if (markers.x[mm] < 200000 and markers.y[mm] > 32000 and markers.y[mm] < 37000):
                 markers.id[mm] = 10
-            if (markers.x[mm] >= 350000 and markers.x[mm] < 400000 and markers.y[mm] > 37000 - (markers.x[mm]-350000)/50000*14000 and markers.y[mm] < 52000 - (markers.x[mm]-350000)/50000*24000):
+            if (markers.x[mm] >= 200000 and markers.x[mm] < 250000 and markers.y[mm] > 27000 - (markers.x[mm]-200000)/50000*14000 and markers.y[mm] < 42000 - (markers.x[mm]-200000)/50000*24000):
                 markers.id[mm] = 9
     	    # Weak zone in the mantle
-            if (markers.y[mm] > 28000 and markers.y[mm] < 90000 and markers.x[mm] > 390000 - (markers.y[mm]-28000)/24000*50000 and markers.x[mm] < 410000 - (markers.y[mm]-28000)/24000*50000):
+            if (markers.y[mm] > 28000 and markers.y[mm] < 90000 and markers.x[mm] > 240000 - (markers.y[mm]-18000)/24000*50000 and markers.x[mm] < 260000 - (markers.y[mm]-18000)/24000*50000):
                 markers.id[mm] = 6            
 	         # Weak zone in the oceanic crust
-            if (markers.y[mm] > 20000 and markers.y[mm] <= 28000 and markers.x[mm] > 390000 - (markers.y[mm]-28000)/24000*50000 and markers.x[mm] < 410000 - (markers.y[mm]-28000)/24000*155000):
+            if (markers.y[mm] > 20000 and markers.y[mm] <= 18000 and markers.x[mm] > 240000 - (markers.y[mm]-18000)/24000*50000 and markers.x[mm] < 260000 - (markers.y[mm]-18000)/24000*155000):
                 markers.id[mm] = 2
 	        # Asthenosphere below the oceanic plate
-            if (markers.y[mm] > 70000 and markers.y[mm] <= 100000 and markers.x[mm] > 560000 - (markers.y[mm]-18000)/24000*75000):
+            if (markers.y[mm] > 70000 and markers.y[mm] <= 100000 and markers.x[mm] > 410000 - (markers.y[mm]-8000)/24000*75000):
                 markers.id[mm] = 5
+            # Box of high viscosity around internal velocity boundary
+            if (markers.x[mm] > 390000 and markers.x[mm] < 420000 and markers.y[mm] > 11000 and markers.y[mm] < 31000):
+                markers.id[mm] = 11
+
+
             # lithospheric mantle, default is 5, we add stripes of 4
             #if (markers.y[mm]>52000 and markers.y[mm]<= 57000):
             #    markers.id[mm] = 4
@@ -121,47 +126,35 @@ def initialize_markers(markers, materials, params, xsize, ysize):
                 markers.T[mm] = params.T_top
             
 	        # Oceanic geotherm
-            age = 3e+7*(365.25*24*3600)      #Oceanic plate age, s
-            y_asth = 9700 		     #Bottom of the lithosphere
+            age = 3e7*(365.25*24*3600)      #Oceanic plate age, s
+            y_asth = 92000   	           #Bottom of the lithosphere
             T_asth = params.T_bot - dtdy*(ysize - y_asth)  # T of astenosphere at y=yast
             kappa = 1e-6		     # Thermal diffusivity of the mantle, m^2/s
-	    
-	        # After Turcotte & Schubert (2002)
-            if (markers.x[mm] > 400000 and markers.y[mm] > 10000 and markers.y[mm] < y_asth):
-                dt = -(params.T_top - T_asth)*(1-math.erf((y_asth-10000)/2/(kappa*age)^0.5))
-                markers.T[mm] = T_asth+dt+(params.T_top-T_asth-dt)*(1-math.erf((markers.y[mm1]-20000)/2/(kappa*age)^0.5))
+    
+	        # After Turcotte & Schubert (2002) 
+            if (markers.x[mm] > 250000 and markers.y[mm] > 10000 and markers.y[mm] < y_asth):  # markers.y was creater than 10000
+                # T difference at the bottom of the oceanic plate
+                dt = -(params.T_top - T_asth)*(1-math.erf((y_asth-10000)/2/(kappa*age)**0.5))
+                markers.T[mm] = T_asth+dt+(params.T_top-T_asth-dt)*(1-math.erf((markers.y[mm]-10000)/2/(kappa*age)**0.5))
 
             # linear continental geotherm
-            if (markers.x[mm] <= 350000 and markers.y[mm] > 17000 and markers.y[mm]<y_asth):
+            if (markers.x[mm] <= 200000 and markers.y[mm] > 7000 and markers.y[mm]<y_asth):
                 markers.T[mm] = params.T_top + (T_asth - params.T_top)*(markers.y[mm] - 7000)/(y_asth - 7000)
             
 	        # Transient left continent --> ocean geotherm
-            if (markers.x[mm] > 350000 and markers.x[mm] < 400000 and markers.y[mm] > 17000 + (markers.x[mm]-350000)/50000*3000 and markers.y[mm] < y_asth):
+            if (markers.x[mm] > 200000 and markers.x[mm] < 250000 and markers.y[mm] > 7000 + (markers.x[mm]-200000)/50000*3000 and markers.y[mm] < y_asth):
 		        # Continental geotherm
-                T_cont = params.T_top + (T_asth-params.T_top)*(markers.y[mm]-(17000+(markers.x[mm]-350000)/50000*3000))/(y_asth-17000)
+                T_cont = params.T_top + (T_asth-params.T_top)*(markers.y[mm]-(7000+(markers.x[mm]-200000)/50000*3000))/(y_asth-7000)
 		        # T difference at the bottom of the oceanic and continental plates
-                dt = -(params.T_top - T_asth)*(1-math.erf((y_asth-10000)/2/(kappa*age)^0.5))
+                dt = -(params.T_top - T_asth)*(1-math.erf((y_asth-10000)/2/(kappa*age)**0.5))
 		        # Oceanic geotherm
-                T_ocea = T_asth+dt+(params.T_top-T_asth-dt)*(1-math.erf((markers.y[mm]-(17000+(markers.x[mm]-350000)/50000*3000))/2/(kappa*age)^0.5))
+                T_ocea = T_asth+dt+(params.T_top-T_asth-dt)*(1-math.erf((markers.y[mm]-(7000+(markers.x[mm]-200000)/50000*3000))/2/(kappa*age)**0.5))
 		        # Linear lateral transition
-                mwt = (markers.x[mm]-350000)/50000
+                mwt = (markers.x[mm]-200000)/50000
 		        # Transitional temperate
                 markers.T[mm] = T_cont*(1-mwt) + T_ocea*mwt
-            # Transient ocean --> right continent geotherm
-            if (markers.y[mm] > 600000 and  markers.x[mm] < 650000 and markers.y[mm] > 7000+(650000-markers.x[mm])/50000*3000 and markers.y[mm] < y_asth):
-            	#Continental geotherm
-                T_cont=params.T_top+(T_asth-params.T_top)*(markers.y[mm]-(7000+(650000-markers.x[mm])/50000*3000))/(y_asth-7000)
-            	#T difference at the bottom of the oceanic and continental plates
-                dt= -(params.T_top-T_asth)*(1-math.erf((y_asth-10000)/2/(kappa*age)^0.5))
-            	# Oceanic geotherm
-                T_ocea=T_asth+dt+(params.T_top-T_asth-dt)*(1-math.erf((markers.y[mm]-(7000+(650000-markers.x[mm])/50000*3000))/2/(kappa*age)^0.5))
-            	# Linear lateral transition
-                mwt=(650000-markers.x[mm])/50000
-                # Transitional temperature
-                markers.T[mm]=T_cont*(1-mwt)+T_ocea*mw
 
-
-		    # update marker index
+            # update marker index
             mm +=1
     
     
@@ -234,14 +227,14 @@ def initializeModel():
 
     # additional model options 
     # initial system size
-    xsize0 = 600000
-    ysize0 = 300000
+    xsize0 = 450000
+    ysize0 = 200000
     
     xsize = xsize0
     ysize = ysize0
 
     # set resolution
-    xnum = 251
+    xnum = 181
     ynum = 51
 
 
@@ -261,29 +254,29 @@ def initializeModel():
 
     # velocity BCs
     B_top = np.zeros((xnum+1,4))
-    B_top[:,1] = 0
+    B_top[:,1] = 1
 
     B_bottom = np.zeros((xnum+1,4))
-    B_bottom[:,1] = 0
+    B_bottom[:,1] = 1
     B_bottom[:,2] = 0 # -params.v_ext/xsize * ysize #Set to zero
 
     B_left = np.zeros((ynum+1,4))
     B_left[:,0] = 0 #-params.v_ext/2 #Set to zero
-    B_left[:,3] = 0
+    B_left[:,3] = 1
 
     B_right = np.zeros((ynum+1,4))
     B_right[:,0] = 0 #params.v_ext/2  #Set to zero
-    B_right[:,3] = 0
+    B_right[:,3] = 1
 
     # optional internal boundary, switched off
     B_intern = np.zeros(8)
-    B_intern[0] = 220  
-    B_intern[1] = 6
-    B_intern[2] = 8
+    B_intern[0] = 163  
+    B_intern[1] = 10
+    B_intern[2] = 12
     B_intern[3] = 7.5*1e-2/(365.25*24*3600)  # convert to m/s
-    B_intern[4] = 6
-    B_intern[5] = 220
-    B_intern[6] = 224
+    B_intern[4] = 10
+    B_intern[5] = 163
+    B_intern[6] = 169
     B_intern[7] = 7.5*1e-2/(365.25*24*3600)  # convert to m/s
 
     # temperature BCs
@@ -309,8 +302,8 @@ def initializeModel():
 
     ############################################################################
     # create markers object
-    mnumx = 600
-    mnumy = 300
+    mnumx = 450
+    mnumy = 200
     markers = Markers(mnumx, mnumy)
 
     # initialize markers

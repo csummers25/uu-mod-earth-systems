@@ -17,7 +17,7 @@ import os
 # if debugging, this should be 1 AND jitclass tags in dataStructures must be commented out!
 os.environ["NUMBA_DISABLE_JIT"] = "0"
 # if 1 prints out extra statements at various places in the timeloop
-debug = 1
+debug = 0
 
 # load the component fucntions from their respective files
 from dataStructures import Markers, Materials, Grid, Parameters, copyGrid

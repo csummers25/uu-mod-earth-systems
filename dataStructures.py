@@ -53,7 +53,7 @@ class Parameters():
         
         # physical model setup
         self.T_top = 273                        # temperature at the top face of the model (K)
-        self.T_bot = 1750                       # temperature at the bottom face of the model (K)
+        self.T_bot = 1825                         # temperature at the bottom face of the model (K) - was 1750
         self.v_ext = 0 #2.0/(100*365.25*24*3600)   # extension velocity of the grid (cm/yr)
         
         # viscosity model
@@ -66,7 +66,7 @@ class Parameters():
         
         # timestepping
         self.t_end = 6E6*(365.24*24*3600)      #72e3/self.v_ext            # end time
-        self.ntstp_max = 10                   # maximum number of timesteps - 360
+        self.ntstp_max =  360*2                      # maximum number of timesteps - 360
         self.Temp_stp_max = 20                  # maximum number of temperature substeps
         
         self.tstp_max = 1e4*365.25*24*3600      # maximum timestep
@@ -94,7 +94,7 @@ class Parameters():
         
         # output options
         self.save_output = 50*2                        # number of steps between output files
-        self.save_fig = 1                           # number of steps between figure output
+        self.save_fig = 20                             # number of steps between figure output
 
 
 spec_mark = [
