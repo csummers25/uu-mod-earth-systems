@@ -146,6 +146,36 @@ Some common boundary condition types can be formulated in this structure as:
 | Prescribed temperature | ``[T, 0]``             |
 +------------------------+------------------------+
 
+Internal velocity Boundary
+--------------------------
+There is also an option to include a 'mobile wall', which is a vertical wall within the simulation domain on which a :math:`x` and/or :math:`y` velocity can be fixed.  The :math:`x` and :math:`y` velocities can be fixed on the same or separate vertical lines.  This is implemented using the ``B_intern`` array, which has the following format:
+
++-------+-------------------------------+------------+
+| index | description                   | value when | 
+|       |                               | not in use |
++=======+===============================+============+
+| 0     | x index of the wall on        | -1         |
+|       | which the x velocity is fixed |            | 
++-------+-------------------------------+------------+
+| 1     | min y-index of the wall       | 0          |
++-------+-------------------------------+------------+
+| 2     | max y-index of the wall       | 0          |
++-------+-------------------------------+------------+
+| 3     | x-velocity on the wall        | 0          |
+|       | described by elements 0-2     |            |
++-------+-------------------------------+------------+
+| 4     | x index of the wall on        | -1         |
+|       | which the y velocity is fixed |            | 
++-------+-------------------------------+------------+
+| 5     | min y-index of the wall       | 0          |
++-------+-------------------------------+------------+
+| 6     | max y-index of the wall       | 0          |
++-------+-------------------------------+------------+
+| 7     | y-velocity on the wall        | 0          |
+|       | described by elements 4-6     |            | 
++-------+-------------------------------+------------+ 
+
+A simple example which shows the effect of this internal wall is in ``models/internalVelocityExample``.
 
 Initial Conditions
 ------------------
