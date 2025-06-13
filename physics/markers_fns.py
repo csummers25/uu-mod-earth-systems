@@ -120,11 +120,7 @@ def markersToGrid(markers, materials, grid, grid0, xnum, ynum, params, tstep, nt
             grid.mu_n[yn,xn] += wij*m_mu*mwt
             grid.sigxx[yn,xn] += wij*markers.sigmaxx[m]*mwt
             grid.wt_eta_n[yn, xn] += wij*mwt
-
-        print(np.min(grid.eta_n))
-        print(np.min(grid.mu_n))
-        print(np.min(grid.sgxx))
-            
+                
     # finally, use weights to calculate the new grid values
     applyGridWeights(xnum, ynum, grid, grid0)
 
@@ -164,6 +160,9 @@ def markerViscosity(markers, materials, m, grid, params, ntstp, tstep, plast_y):
     if (materials.visc[mID, 0] < 1e-11):
         # constant viscosity
         m_eta = materials.visc[mID, 1]
+        # High constant viscosity at internal boundary 
+    elif (markers.x[m] > 360000 and markers.x[m] < 460000 and markers.y[m] > 30000 and markers.y[m] < 60000):
+        m_eta = 1e28
     else:
         # power law viscosity
         # eps_ii = Ad * sigma_ii^n * exp(-(Ea+Va*P)/RT)

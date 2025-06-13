@@ -30,6 +30,7 @@ def viscElastStress(grid, grid0, tstep, xnum, ynum):
     None.
 
     '''
+
     
     for i in range(0, ynum):
         for j in range(0, xnum):
@@ -179,6 +180,7 @@ def gridSpacings(bx, by, Nx, Ny, non_uni_xsize, xsize, ysize, grid, t_curr):
             
         # size of the non-uniform region 
         D = xsize - grid.x[xnum-Nx-1]
+
     else:
         # set the new position of the first node,
         # and the size of the non-uniform region
@@ -195,9 +197,12 @@ def gridSpacings(bx, by, Nx, Ny, non_uni_xsize, xsize, ysize, grid, t_curr):
             F = (1 + D/bx*(1 - 1/F))**(1/Nx)
     
         # define grid points to the right of the high-res region
-        for i in range(xnum-Nx, xnum):
+        for i in range(xnum-Nx, xnum):   #was xnum
             grid.x[i] = grid.x[i-1] + bx*F**(i-(xnum-Nx-1))
-    
+            print('i:', i, 'x:', grid.x[i])
+        #for i in range(104, xnum):
+        #    grid.x[i] = grid.x[i-1] + 50e3
+        
         if (t_curr==0):
             grid.x[xnum-1] = xsize
     
@@ -211,18 +216,19 @@ def gridSpacings(bx, by, Nx, Ny, non_uni_xsize, xsize, ysize, grid, t_curr):
         # set the points left of the high res region
         for i in range(1,Nx):
             grid.x[i] = grid.x[i-1] + bx*F**(Nx+1-i)
-
+            
     ###########################################################################
     # Vertical grid
 
     # set the high resolution area
     for i in range(1,ynum-Ny):
         grid.y[i] = grid.y[i-1] + by
+      
     
     if (Ny > 0):
         # size of the non-uniform regions
         D = ysize - grid.y[ynum-Ny-1]
-    
+       
         # solve iteratively for scaling factor
         F = 1.1
         for i in range(0,100):
@@ -230,7 +236,7 @@ def gridSpacings(bx, by, Nx, Ny, non_uni_xsize, xsize, ysize, grid, t_curr):
             # set the grid points below the high-res region
         for i in range(ynum-Ny, ynum):
             grid.y[i] = grid.y[i-1] + by*F**(i-(ynum-Ny-1))
-        
+           
         # fix the end position if this is the first step
         if (t_curr==0):
             grid.y[ynum-1] = ysize

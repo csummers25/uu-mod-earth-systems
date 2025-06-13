@@ -53,8 +53,7 @@ class Parameters():
         
         # physical model setup
         self.T_top = 273                        # temperature at the top face of the model (K)
-        self.T_bot = 1825                         # temperature at the bottom face of the model (K) - was 1750
-        self.v_ext = 0 #2.0/(100*365.25*24*3600)   # extension velocity of the grid (cm/yr)
+        self.T_bot = 1825                       # temperature at the bottom face of the model (K)
         
         # viscosity model
         self.eta_min = 1e18                     # minimum viscosity
@@ -63,10 +62,9 @@ class Parameters():
         self.eta_wt = 0                         # viscosity weighting, for (old?) visco-plastic model
         self.max_pow_law = 150                  # maximum power law exponent in visc model
         
-        
         # timestepping
-        self.t_end = 6E6*(365.24*24*3600)      #72e3/self.v_ext            # end time
-        self.ntstp_max =  360*2                      # maximum number of timesteps - 360
+        self.t_end = 2.5E6*(365.24*24*3600)       # end time: Does not work
+        self.ntstp_max =  1                   # maximum number of timesteps 
         self.Temp_stp_max = 20                  # maximum number of temperature substeps
         
         self.tstp_max = 1e4*365.25*24*3600      # maximum timestep
@@ -86,15 +84,15 @@ class Parameters():
         self.adia_yn = 1                        # use adiabatic heating?
         
         # grid spacing params
-        self.bx = 2000                          # x-grid spacing in high res area
+        self.bx = 2200                          # x-grid spacing in high res area
         self.by = 2000                          # y-grid spacing in high res area
-        self.Nx = 30                            # number of unevenly spaced grid points either side of high res zone
-        self.Ny = 20                            # number of unvenly spaced grid points below high res zone
-        self.non_uni_xsize = 100000             # physical x-size of non-uniform grid region
+        self.Nx = 24                            # number of unevenly spaced grid pointss either side of high res zone
+        self.Ny = 15                            # number of unvenly spaced grid points below high res zone
+        self.non_uni_xsize = 175000             # physical x-size of non-uniform grid region left of the high res zone
         
         # output options
-        self.save_output = 50*2                        # number of steps between output files
-        self.save_fig = 20                             # number of steps between figure output
+        self.save_output = 50                    # number of steps between output files
+        self.save_fig = 1                        # number of steps between figure output
 
 
 spec_mark = [
@@ -139,7 +137,7 @@ class Markers():
         self.nx = np.zeros(self.num, dtype=np.int64)    # horizontal grid index
         self.ny = np.zeros(self.num, dtype=np.int64)    # vertical grid index
         self.sigmaxx = np.zeros((self.num))         # normal stress
-        self.sigmaxy = np.zeros((self.num))         # shear stress
+        self.sigmaxy = np.zeros((self.num))         # shear stressi
         self.eta = np.zeros((self.num))             # viscosity
         self.epsxx = np.zeros((self.num))           # normal strain rate
         self.epsxy = np.zeros((self.num))           # shear strain rate

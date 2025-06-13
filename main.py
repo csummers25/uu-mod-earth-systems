@@ -28,7 +28,7 @@ from physics.markers_fns import markersToGrid, gridToMarker, updateMarkerErat, s
                         subgridDiffusion, advectMarkers
 from physics.grid_fns import updateStresses, viscElastStress, strainRateComps, gridSpacings
 
-from visualisation import plotAVar, plotSeveralVars, plotMarkerFields, basicGridVelocities
+from visualisation_2 import plotAVar, plotSeveralVars, plotMarkerFields, basicGridVelocities
 
 # load the setup fn for the chosen model
 from models.Subduction.setup import initializeModel
@@ -283,7 +283,7 @@ for nt in range(0, params.ntstp_max):
         vxb, vyb = basicGridVelocities(grid.vx, grid.vy, xnum, ynum)
         
         # plotting
-        plotAVar(grid, vxb, vyb, xsize, ysize, nt, time_curr)
+        #plotAVar(grid, vxb, vyb, xsize, ysize, nt, time_curr)
         plotSeveralVars(grid, vxb, vyb, xsize, ysize, nt, time_curr)
         plotMarkerFields(xsize, ysize, markers, grid, nt, time_curr)
     
@@ -300,7 +300,7 @@ for nt in range(0, params.ntstp_max):
     # ysize += -params.v_ext/xsize*ysize*timestep
     # xsize += params.v_ext*timestep
     
-    gridSpacings(params.bx, params.by, params.Nx, params.Ny, params.non_uni_xsize, xsize, ysize, grid, time_curr)
+    #gridSpacings(params.bx, params.by, params.Nx, params.Ny, params.non_uni_xsize, xsize, ysize, grid, time_curr)
     
     # if we have changing grid, need to update bottom BC
     if (abs(params.v_ext)>0):

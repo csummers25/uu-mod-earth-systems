@@ -98,9 +98,6 @@ def initialize_markers(markers, materials, params, xsize, ysize):
 	        # Asthenosphere below the oceanic plate
             if (markers.y[mm] > 70000 and markers.y[mm] <= 100000 and markers.x[mm] > 410000 - (markers.y[mm]-8000)/24000*75000):
                 markers.id[mm] = 5
-            # Box of high viscosity around internal velocity boundary
-            if (markers.x[mm] > 390000 and markers.x[mm] < 420000 and markers.y[mm] > 11000 and markers.y[mm] < 31000):
-                markers.id[mm] = 11
 
 
             # lithospheric mantle, default is 5, we add stripes of 4
@@ -202,10 +199,10 @@ def initializeModel():
         Array defining optional internal boundary eg. moving wall. Format is:
         B_intern[0] = x-index of vx nodes with prescribed velocity (-1 is not in use)
         B_intern[1-2] = min/max y-index of the wall
-        B_intern[4] = prescribed x-velocity value. ==> this should be 3
-        B_intern[5] = y-index of vy nodes with prescribed velocity (-1 is not in use) ==> this is 4
-        B_intern[6-7] = min/max x-index of the wall ==> this is 5 and 6
-        B_intern[8] = prescribed y-velocity value. ==> this is 7 and horizontal velocity?
+        B_intern[3] = prescribed x-velocity value.
+        B_intern[4] = y-index of vy nodes with prescribed velocity (-1 is not in use) 
+        B_intern[5-6] = min/max x-index of the wall. 
+        B_intern[7] = prescribed y-velocity value.
     BT_top : ARRAY
         Top temperature BCs.  Array has 2 columns, values in each are defined as:
         T[i,j] = BT_top[0] + BT_top[1]*T[i+1,j]
@@ -227,15 +224,15 @@ def initializeModel():
 
     # additional model options 
     # initial system size
-    xsize0 = 450000
+    xsize0 = 600000    
     ysize0 = 200000
     
     xsize = xsize0
     ysize = ysize0
 
     # set resolution
-    xnum = 181
-    ynum = 51
+    xnum = 104
+    ynum = 35
 
 
     # instantiate/load material properties object
@@ -258,26 +255,26 @@ def initializeModel():
 
     B_bottom = np.zeros((xnum+1,4))
     B_bottom[:,1] = 1
-    B_bottom[:,2] = 0 # -params.v_ext/xsize * ysize #Set to zero
+    B_bottom[:,2] = 0
 
     B_left = np.zeros((ynum+1,4))
-    B_left[:,0] = 0 #-params.v_ext/2 #Set to zero
+    B_left[:,0] = 0 
     B_left[:,3] = 1
 
     B_right = np.zeros((ynum+1,4))
-    B_right[:,0] = 0 #params.v_ext/2  #Set to zero
+    B_right[:,0] = 0 
     B_right[:,3] = 1
 
     # optional internal boundary, switched off
     B_intern = np.zeros(8)
-    B_intern[0] = 163  
-    B_intern[1] = 10
-    B_intern[2] = 12
-    B_intern[3] = 7.5*1e-2/(365.25*24*3600)  # convert to m/s
-    B_intern[4] = 10
-    B_intern[5] = 163
-    B_intern[6] = 169
-    B_intern[7] = 7.5*1e-2/(365.25*24*3600)  # convert to m/s
+    B_intern[0] = 94   
+    B_intern[1] = 20
+    B_intern[2] = 23
+    B_intern[3] = (-7.5*1e-2)/(365.25*24*3600)  # convert to m/s
+    B_intern[4] = -1 
+    B_intern[5] = 0
+    B_intern[6] = 0
+    B_intern[7] = 0  
 
     # temperature BCs
     BT_top = np.zeros((xnum, 2))
@@ -302,7 +299,7 @@ def initializeModel():
 
     ############################################################################
     # create markers object
-    mnumx = 450
+    mnumx = 450+100
     mnumy = 200
     markers = Markers(mnumx, mnumy)
 
