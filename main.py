@@ -28,7 +28,7 @@ from physics.markers_fns import markersToGrid, gridToMarker, updateMarkerErat, s
                         subgridDiffusion, advectMarkers
 from physics.grid_fns import updateStresses, viscElastStress, strainRateComps, gridSpacings
 
-from visualisation_2 import plotAVar, plotSeveralVars, plotMarkerFields, basicGridVelocities
+from visualisation import plotAVar, plotSeveralVars, plotMarkerFields, basicGridVelocities
 
 # load the setup fn for the chosen model
 from models.Subduction.setup import initializeModel

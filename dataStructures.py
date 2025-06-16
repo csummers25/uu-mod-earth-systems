@@ -9,91 +9,6 @@ import numpy as np
 from numba import jit, float64, int64
 from numba.experimental import jitclass
 
-spec_par = [
-    ('gx', float64),
-    ('gy', float64),
-    ('Rgas', float64),
-    ('T_top', float64),
-    ('T_bot', float64),
-    ('v_ext', float64),
-    ('eta_min', float64),
-    ('eta_max', float64),
-    ('stress_min', float64),
-    ('eta_wt', float64),
-    ('max_pow_law', float64),
-    ('t_end', float64),
-    ('ntstp_max', int64),
-    ('Temp_stp_max', int64),
-    ('tstp_max', float64),
-    ('marker_max', float64),
-    ('marker_sch', int64),
-    ('movemode', int64),
-    ('dsubgrid', float64),
-    ('dsubgridT', float64),
-    ('frict_yn', float64),
-    ('adia_yn', float64),
-    ('bx', float64),
-    ('by', float64),
-    ('Nx', int64),
-    ('Ny', int64),
-    ('non_uni_xsize', float64),
-    ('save_output', int64),
-    ('save_fig', int64),
-]
-@jitclass(spec_par)
-class Parameters():
-    
-    # creates parameters object
-    def __init__(self):
-        
-        # physical constants
-        self.gx = 0.0                           # x-direction gravitational acc
-        self.gy = 9.81                          # y-direction gravitational acc
-        self.Rgas = 8.314                       # gas constant
-        
-        # physical model setup
-        self.T_top = 273                        # temperature at the top face of the model (K)
-        self.T_bot = 1825                       # temperature at the bottom face of the model (K)
-        
-        # viscosity model
-        self.eta_min = 1e18                     # minimum viscosity
-        self.eta_max = 1e25                     # maximum viscosity
-        self.stress_min = 1e4                   # minimum stress
-        self.eta_wt = 0                         # viscosity weighting, for (old?) visco-plastic model
-        self.max_pow_law = 150                  # maximum power law exponent in visc model
-        
-        # timestepping
-        self.t_end = 3E6*(365.24*24*3600)       # end time: Does not work
-        self.ntstp_max =  680                   # maximum number of timesteps 
-        self.Temp_stp_max = 20                  # maximum number of temperature substeps
-        
-        self.tstp_max = 1e4*365.25*24*3600      # maximum timestep
-        
-        # marker options
-        self.marker_max = 0.1                   # maximum marker movement per timestep (fraction of av. grid step)
-        self.marker_sch = 1                     # marker scheme 0 = no movement, 1 = Euler, 4=RK4
-        
-        self.movemode = 0                       # velocity calculation 0 = momentum eqn, 1 = solid body (not working currently)
-        
-        # subgrid diffusion
-        self.dsubgrid = 1                       # subgrid stress coeff (none if zero)
-        self.dsubgridT = 1                      # subgrid diffusion coeff(none if zero)
-        
-        # switches for heating terms
-        self.frict_yn = 1                       # use friction heating?
-        self.adia_yn = 1                        # use adiabatic heating?
-        
-        # grid spacing params
-        self.bx = 2200                          # x-grid spacing in high res area
-        self.by = 2000                          # y-grid spacing in high res area
-        self.Nx = 24                            # number of unevenly spaced grid pointss either side of high res zone
-        self.Ny = 15                            # number of unvenly spaced grid points below high res zone
-        self.non_uni_xsize = 175000             # physical x-size of non-uniform grid region left of the high res zone
-        
-        # output options
-        self.save_output = 50                    # number of steps between output files
-        self.save_fig = 12                        # number of steps between figure output
-
 
 spec_mark = [
      ('xnum', int64),
@@ -118,10 +33,68 @@ spec_mark = [
 
 @jitclass(spec_mark)
 class Markers():
+    '''
+    Class which stores all properties of markers in arrays.
     
+    Attributes
+    ----------
+    xnum : INT
+        Number of markers in x-direction, in initial configuration.
+    ynum : INT
+        Number of markers in y-direction, in initial configuration.
+    num : INT
+        Total number of markers (xnum*ynum)
+    x : ARRAY
+        Marker x-coordinates
+    y : ARRAY
+        Marker y-coordinates
+    T : ARRAY
+        Marker temperatures
+    id : ARRAY
+        Marker material type identifier
+    nx : ARRAY
+        Marker horizontal grid index of nearest top-left node
+    ny : ARRAY
+        Marker vertical grid index of the nearest top-left node
+    sigmaxx : ARRAY
+        Marker normal stress
+    sigmaxy : ARRAY
+        Marker shear stress
+    eta : ARRAY
+        Marker viscosity
+    epsxx : ARRAY
+        Marker normal strain rate
+    epsxy : ARRAY
+        Markers shear strain rate
+    P : ARRAY
+        Marker pressure
+    gII : ARRAY
+        E_rat : ARRAY
+        eii_marker/eii_grid ratio.
+    epsii : ARRAY
+        Marker deviatoric strain rate
+    
+    
+    '''
     # creates empty marker property arrays
     def __init__(self, numx, numy):
-        
+        '''
+        Constructor for the markers object, which creates zeroed arrays for all
+        properties, ready to be intialized by an implementation of initialize_markers
+
+        Parameters
+        ----------
+        numx : INT
+            Number of markers in x-direction in initial grid configuration.
+        numy : INT
+            Number of markers in y-direction in initial grid configuration.
+
+        Returns
+        -------
+        None.
+
+        '''
+
         # number of markers in each direction in initial setup
         self.xnum = numx
         self.ynum = numy
