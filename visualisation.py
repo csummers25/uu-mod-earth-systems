@@ -46,7 +46,7 @@ def basicGridVelocities(gridvx, gridvy, xnum, ynum):
 
 def plotAVar(grid, vxb, vyb, L_x, L_y, ntstp, t_curr):
     '''
-    Plot a single variable as a colormap, with velocity arrows annotated.
+    Plot a single variable as a colormap.
 
     Parameters
     ----------
@@ -70,26 +70,22 @@ def plotAVar(grid, vxb, vyb, L_x, L_y, ntstp, t_curr):
     None.
 
     '''
-    
-    xres = grid.xnum
-    yres = grid.ynum
-    
     X, Y = np.meshgrid(grid.x, grid.y)
     
-    fig = figure.Figure(figsize=(9,9), constrained_layout=True)
+    fig = figure.Figure(figsize=(9,3), constrained_layout=True)
     
     axs = fig.subplots(1,1, sharex=True, sharey=True)
 
-    # plot the density as colormap
-    im = axs.pcolor(X, Y, grid.rho, shading='nearest', vmin=1000, vmax=3300)
+    # plot the temperature as colormap
+    im = axs.pcolor(X, Y, grid.T-273, shading='nearest', vmin=0, vmax=1400)
     fig.colorbar(im, ax=axs,pad=0.0) # display colorbar
-    axs.set_title('Density')     # set plot title
-    axs.set(ylabel='y (m)',xlabel='x (m)')         # label the y-axis (shared axis for x)
-    qu = axs.quiver(grid.x, grid.y, vxb[:yres,:], np.flip(-vyb[:,:xres],0)) 
+    axs.set_title('Temperature (C)')     # set plot title
+    axs.set(ylabel='y (km)', xlabel='x (km)')         # label the y-axis and x-axis
+
     axs.invert_yaxis()
 
     fig.suptitle('Time: %.3f Myr'%(t_curr*1e-6/(365.25*24*3600)))
-    fig.savefig('./Figures/rho_tstp_%i.png'%(ntstp))
+    fig.savefig('./Figures/temp_tstp_%i.png'%(ntstp))
     #plt.close()
 
 def plotSeveralVars(grid, vxb, vyb, L_x, L_y, ntstp, t_curr):
@@ -128,47 +124,43 @@ def plotSeveralVars(grid, vxb, vyb, L_x, L_y, ntstp, t_curr):
     X, Y = np.meshgrid(grid.x, grid.y)
     XP, YP = np.meshgrid(grid.cx, grid.cy)
     
-    fig = figure.Figure(figsize=(18,12), constrained_layout=True)
+    fig = figure.Figure(figsize=(18,18), constrained_layout=True)
     
-    axs = fig.subplots(2,3, sharex=True, sharey=True)
+    axs = fig.subplots(3,1, sharex=True, sharey=True)
+    temp_levels = [100, 150, 350, 450, 1300]
 
     # plot the density as colormap
-    im = axs[0,0].pcolor(X, Y, grid.rho, shading='nearest', vmin=1000, vmax=3300)
-    fig.colorbar(im, ax=axs[0,0],pad=0.0) # display colorbar
-    axs[0,0].set_title('Density')     # set plot title
-    axs[0,0].set(ylabel='y (m)')         # label the y-axis (shared axis for x)
-    
-    qu = axs[0,0].quiver(grid.x, grid.y, vxb[:yres,:], np.flip(-vyb[:,:xres],0)) 
-    axs[0,0].invert_yaxis()
+    im = axs[0].pcolor(X, Y, grid.rho, shading='nearest', vmin=2200, vmax=3500)
+    fig.colorbar(im, ax=axs[0],pad=0.0) # display colorbar
+    axs[0].set_title('Density (kg/m3) ')     # set plot title
+    axs[0].set(ylabel='y (m)')         # label the y-axis (shared axis for x)
+    step = 5
+    # Add velocity arrows
+    qu = axs[0].quiver(X[::step, ::step], Y[::step, ::step], vxb[:yres,:][::step, ::step], np.flip(-vyb[:,:xres],0)[::step, ::step])	    
+    # Add temperature contours
+    cs = axs[0].contour(X, Y, grid.T-273, levels=temp_levels, colors='w', linewidths=0.8)
+    axs[0].clabel(cs, inline=True, fontsize=8, fmt='%d C')
+    axs[0].invert_yaxis()
 
-    # plot the pressure as colormap
-    im = axs[0,1].pcolor(X, Y, grid.P, shading='flat',vmin=0.1e9,vmax=9e9)
-    fig.colorbar(im, ax=axs[0,1],pad=0.0) # display colorbar
-    axs[0,1].set_title('Pressure')     # set plot title
+    #Viscosity
+    im = axs[1].pcolor(X, Y, np.log10(grid.eta_n),vmin=18, vmax=28)
+    fig.colorbar(im, ax=axs[1],pad=0.0) # display colorbar
+    axs[1].set(ylabel='y (m)')         # label the y-axis (shared axis for x)
+    axs[1].set_title('Viscosity log10(Pa s)')     # set plot title
+    # Add temperature contours
+    cs = axs[1].contour(X, Y, grid.T-273, levels=temp_levels, colors='w', linewidths=0.8)
+    axs[1].clabel(cs, inline=True, fontsize=8, fmt='%d C')
 
-    # plot vx as colormap
-    im = axs[1,0].pcolor(X, Y, vxb, shading='nearest',vmin=-5e-10, vmax=5e-10)
-    fig.colorbar(im, ax=axs[1,0],pad=0.0) # display colorbar
-    axs[1,0].set_title('Vx')     # set plot title
-    axs[1,0].set(ylabel='y (m)', xlabel='x (m)')         # label the y-axis (shared axis for x)
+	# Pressure
+    im = axs[2].pcolor(X, Y, grid.P, shading='flat',vmin=0.1e9,vmax=9e9)
+    fig.colorbar(im, ax=axs[2],pad=0.0) # display colorbar
+    axs[2].set(ylabel='y (m)', xlabel='x (m)')         # label the x and y-axis
+    axs[2].set_title('Pressure (Pa)') #set plot title
+    # Add temperature contours
+    cs = axs[2].contour(X, Y, grid.T-273, levels=temp_levels, colors='w', linewidths=0.8)
+    axs[2].clabel(cs, inline=True, fontsize=8, fmt='%d C')
 
-    # plot vy as colormap
-    im = axs[1,1].pcolor(X, Y, vyb, shading='nearest',vmin=-5e-10, vmax=5e-10)
-    fig.colorbar(im, ax=axs[1,1],pad=0.0) # display colorbar
-    axs[1,1].set_title('Vy')     # set plot title
-    axs[1,1].set(xlabel='x (m)')         
-    
-    # T
-    im = axs[0,2].pcolor(X, Y, grid.T, shading='nearest',vmin=273, vmax=1800)
-    fig.colorbar(im, ax=axs[0,2],pad=0.0) # display colorbar
-    axs[0,2].set_title('Temperature')     # set plot title
 
-    # sigxy
-    im = axs[1,2].pcolor(X, Y, np.log10(grid.eta_s),vmin=18, vmax=25)
-    fig.colorbar(im, ax=axs[1,2],pad=0.0) # display colorbar
-    axs[1,2].set_title('Viscosity')     # set plot title
-    axs[1,2].set(xlabel='x (m)') 
-    
     fig.suptitle('Time: %.3f Myr'%(t_curr*1e-6/(365.25*24*3600)))
 
     fig.savefig('./Figures/densT_tstp_%i.png'%(ntstp))
@@ -200,25 +192,40 @@ def plotMarkerFields(xsize, ysize, markers, grid, ntstp, t_curr):
 
     '''
     
-    mark_com, mark_gii = get_marker_fields_vis(xsize, ysize, markers, grid)
+    mark_com, mark_gii, mark_sigmaxx = get_marker_fields_vis(xsize, ysize, markers, grid)
     
-    fig = figure.Figure(figsize=(12,18), constrained_layout=True)
+    fig = figure.Figure(figsize=(18,18), constrained_layout=True)
+    X, Y = np.meshgrid(grid.x, grid.y)
     
-    axs = fig.subplots(2,1, sharex=True)
+    axs = fig.subplots(3,1, sharex=True)
+    temp_levels = [100, 150, 350, 450, 1300]
 
-    # plot the density as colormap
+    # plot the lithology as colormap
     im = axs[0].imshow(mark_com, origin='upper', aspect='auto', extent=[0,xsize,ysize,0])
     fig.colorbar(im, ax=axs[0],pad=0.0) # display colorbar
     axs[0].set_title('Lithology')     # set plot title
-    axs[0].set(ylabel='y (m)', xlim=(50e3,350e3), ylim=(80e3,0))
+    axs[0].set(ylabel='y (m)', xlim=(0e3, 600e3), ylim=(200e3, 0))
+    # Plot temperature contours
+    cs = axs[0].contour(X, Y, grid.T-273, levels=temp_levels, colors='w', linewidths=0.8)
+    axs[0].clabel(cs, inline=True, fontsize=8, fmt='%d C')
     
     im = axs[1].imshow(np.log10(mark_gii), origin='upper', aspect='auto', extent=[0,xsize,ysize,0], vmin=-2, vmax=2)
     fig.colorbar(im, ax=axs[1],pad=0.0) # display colorbar
     axs[1].set_title('Strain')     # set plot title
-    axs[1].set(xlabel='x (m)', ylabel='y (m)', xlim=(50e3,350e3), ylim=(150e3,0))
+    axs[1].set(ylabel = 'y (m)',  xlim=(0e3, 600e3), ylim=(200e3, 0))
+    # Plot temperature contours
+    cs = axs[1].contour(X, Y, grid.T-273, levels=temp_levels, colors='w', linewidths=0.8)
+    axs[1].clabel(cs, inline=True, fontsize=8, fmt='%d C')
     
+    im = axs[2].imshow(mark_sigmaxx, origin='upper', aspect='auto', extent=[0,xsize,ysize,0])
+    fig.colorbar(im, ax=axs[2],pad=0.0) # display colorbar
+    axs[2].set_title('Normal stress (Pa)')     # set plot title
+    axs[2].set(xlabel='x (m)', ylabel = 'y (m)',  xlim=(0e3, 600e3), ylim=(200e3, 0))
+    # Plot temperature contours
+    cs = axs[2].contour(X, Y, grid.T-273, levels=temp_levels, colors='w', linewidths=0.8)
+    axs[2].clabel(cs, inline=True, fontsize=8, fmt='%d C')
+
     fig.suptitle('Time: %.3f Myr'%(t_curr*1e-6/(365.25*24*3600)))
-    
     fig.savefig('./Figures/lithology_tstp_%i.png'%(ntstp))
     #plt.close()
     
@@ -260,8 +267,9 @@ def get_marker_fields_vis(xsize, ysize, markers, grid):
     # create marker visualization arrays
     mark_com = np.ones((yres, xres))*np.nan
     mark_dis = np.ones((yres, xres))*1e20
-    mark_gii = np.ones((yres, xres))*np.nan
-    
+    mark_gii = np.ones((yres, xres))*np.nan 
+    mark_sigmaxx = np.ones((yres, xres))*np.nan    
+
     # loop through markers
     for m in range(0,markers.num):
         
@@ -309,8 +317,9 @@ def get_marker_fields_vis(xsize, ysize, markers, grid):
                     mark_com[m20, m10] = markers.id[m]
                     mark_gii[m20, m10] = markers.gII[m]
                     mark_dis[m20, m10] = dd
+                    mark_sigmaxx[m20, m10] = markers.sigmaxx[m]
 
-    return mark_com, mark_gii
+    return mark_com, mark_gii, mark_sigmaxx
 
 
 

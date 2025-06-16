@@ -9,8 +9,6 @@ import numpy as np
 from numba import jit, float64, int64
 from numba.experimental import jitclass
 
-
-
 spec_mark = [
      ('xnum', int64),
      ('ynum', int64),
@@ -78,7 +76,6 @@ class Markers():
     
     
     '''
-    
     # creates empty marker property arrays
     def __init__(self, numx, numy):
         '''
@@ -97,7 +94,7 @@ class Markers():
         None.
 
         '''
-        
+
         # number of markers in each direction in initial setup
         self.xnum = numx
         self.ynum = numy
