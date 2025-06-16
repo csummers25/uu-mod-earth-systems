@@ -63,8 +63,8 @@ class Parameters():
         self.max_pow_law = 150                  # maximum power law exponent in visc model
         
         # timestepping
-        self.t_end = 2.5E6*(365.24*24*3600)       # end time: Does not work
-        self.ntstp_max =  1                   # maximum number of timesteps 
+        self.t_end = 3E6*(365.24*24*3600)       # end time: Does not work
+        self.ntstp_max =  680                   # maximum number of timesteps 
         self.Temp_stp_max = 20                  # maximum number of temperature substeps
         
         self.tstp_max = 1e4*365.25*24*3600      # maximum timestep
@@ -92,7 +92,7 @@ class Parameters():
         
         # output options
         self.save_output = 50                    # number of steps between output files
-        self.save_fig = 1                        # number of steps between figure output
+        self.save_fig = 12                        # number of steps between figure output
 
 
 spec_mark = [
@@ -137,7 +137,7 @@ class Markers():
         self.nx = np.zeros(self.num, dtype=np.int64)    # horizontal grid index
         self.ny = np.zeros(self.num, dtype=np.int64)    # vertical grid index
         self.sigmaxx = np.zeros((self.num))         # normal stress
-        self.sigmaxy = np.zeros((self.num))         # shear stressi
+        self.sigmaxy = np.zeros((self.num))         # shear stress
         self.eta = np.zeros((self.num))             # viscosity
         self.epsxx = np.zeros((self.num))           # normal strain rate
         self.epsxy = np.zeros((self.num))           # shear strain rate

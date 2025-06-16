@@ -170,16 +170,20 @@ def gridSpacings(bx, by, Nx, Ny, non_uni_xsize, xsize, ysize, grid, t_curr):
     
     ###############################################################################
     # Horizontal grid
-    
+    xsize_norm = 600e3
+
     if (t_curr==0):
         # set the points in the high res area
         # this only needs doing on the initial setup
         grid.x[Nx] = non_uni_xsize 
-        for i in range(Nx+1,xnum-Nx):
+        for i in range(Nx+1,104-Nx):  #xnum
             grid.x[i] = grid.x[i-1] + bx
             
         # size of the non-uniform region 
-        D = xsize - grid.x[xnum-Nx-1]
+        D = xsize_norm - grid.x[104-Nx-1] #xsize, xnum
+        #print(grid.x[Nx+1])
+        #print(grid.x[104-Nx-1])
+        #print('D = ', D)
 
     else:
         # set the new position of the first node,
@@ -193,18 +197,18 @@ def gridSpacings(bx, by, Nx, Ny, non_uni_xsize, xsize, ysize, grid, t_curr):
     if (Nx > 0):
         F = 1.1
         # iteratively solve for F
-        for i in range(0,100):
+        for i in range(0,200):
             F = (1 + D/bx*(1 - 1/F))**(1/Nx)
     
         # define grid points to the right of the high-res region
-        for i in range(xnum-Nx, xnum):   #was xnum
-            grid.x[i] = grid.x[i-1] + bx*F**(i-(xnum-Nx-1))
-            print('i:', i, 'x:', grid.x[i])
-        #for i in range(104, xnum):
-        #    grid.x[i] = grid.x[i-1] + 50e3
+        for i in range(104-Nx, 104):   #was xnum
+            grid.x[i] = grid.x[i-1] + bx*F**(i-(104-Nx-1))
+        for i in range(104, xnum):
+            grid.x[i] = grid.x[i-1] + 40e3
         
         if (t_curr==0):
             grid.x[xnum-1] = xsize
+            grid.x[104-1] = xsize_norm
     
         # now do the same going leftward
         D = grid.x[Nx] - grid.x[0] # think this should still work for inital case?
@@ -216,7 +220,9 @@ def gridSpacings(bx, by, Nx, Ny, non_uni_xsize, xsize, ysize, grid, t_curr):
         # set the points left of the high res region
         for i in range(1,Nx):
             grid.x[i] = grid.x[i-1] + bx*F**(Nx+1-i)
-            
+        
+    
+    #print(grid.x)    
     ###########################################################################
     # Vertical grid
 

@@ -78,6 +78,7 @@ def initialize_markers(markers, materials, params, xsize, ysize):
                 markers.id[mm] = 7
             if (markers.x[mm] >= 200000 and markers.x[mm] < 250000 and  markers.y[mm] > 7000 + (markers.x[mm]-200000)/50000*3000 and markers.y[mm] < 32000 - (markers.x[mm]-200000)/50000*14000):
                 markers.id[mm] = 7
+            # Used for visualization of the model
             if (markers.x[mm] < 200000 and markers.y[mm] > 11000 and markers.y[mm] < 15000):
                 markers.id[mm] = 8
             if (markers.x[mm] < 200000 and markers.y[mm] > 19000 and markers.y[mm] < 23000):
@@ -224,14 +225,14 @@ def initializeModel():
 
     # additional model options 
     # initial system size
-    xsize0 = 600000    
+    xsize0 = 760000      #600000    
     ysize0 = 200000
     
     xsize = xsize0
     ysize = ysize0
 
     # set resolution
-    xnum = 104
+    xnum = 104+4
     ynum = 35
 
 
@@ -267,7 +268,7 @@ def initializeModel():
 
     # optional internal boundary, switched off
     B_intern = np.zeros(8)
-    B_intern[0] = 94   
+    B_intern[0] = 99  
     B_intern[1] = 20
     B_intern[2] = 23
     B_intern[3] = (-7.5*1e-2)/(365.25*24*3600)  # convert to m/s
@@ -299,7 +300,7 @@ def initializeModel():
 
     ############################################################################
     # create markers object
-    mnumx = 450+100
+    mnumx = 600
     mnumy = 200
     markers = Markers(mnumx, mnumy)
 

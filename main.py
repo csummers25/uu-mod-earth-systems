@@ -283,7 +283,7 @@ for nt in range(0, params.ntstp_max):
         vxb, vyb = basicGridVelocities(grid.vx, grid.vy, xnum, ynum)
         
         # plotting
-        #plotAVar(grid, vxb, vyb, xsize, ysize, nt, time_curr)
+        plotAVar(grid, vxb, vyb, xsize, ysize, nt, time_curr)
         plotSeveralVars(grid, vxb, vyb, xsize, ysize, nt, time_curr)
         plotMarkerFields(xsize, ysize, markers, grid, nt, time_curr)
     

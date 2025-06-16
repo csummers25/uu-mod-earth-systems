@@ -161,7 +161,7 @@ def markerViscosity(markers, materials, m, grid, params, ntstp, tstep, plast_y):
         # constant viscosity
         m_eta = materials.visc[mID, 1]
         # High constant viscosity at internal boundary 
-    elif (markers.x[m] > 360000 and markers.x[m] < 460000 and markers.y[m] > 30000 and markers.y[m] < 60000):
+    elif (markers.x[m] > 430000 and markers.x[m] < 550000 and markers.y[m] > 30000 and markers.y[m] < 60000):
         m_eta = 1e28
     else:
         # power law viscosity
