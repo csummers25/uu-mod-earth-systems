@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-fns for calculating visco-elastic stresses, strain rates and grid spacings
+Functions for calculating grid-based properties such as visco-elastic stresses, strain rates and grid spacings.
 """
 import numpy as np
 from numba import jit

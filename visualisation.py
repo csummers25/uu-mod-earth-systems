@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Visualisation routines
+Visualisation routines for plotting code output
 
 """
 import matplotlib.pyplot as plt
@@ -81,6 +81,7 @@ def plotAVar(grid, vxb, vyb, L_x, L_y, ntstp, t_curr):
     fig.colorbar(im, ax=axs,pad=0.0) # display colorbar
     axs.set_title('Temperature (C)')     # set plot title
     axs.set(ylabel='y (km)', xlabel='x (km)')         # label the y-axis and x-axis
+
     axs.invert_yaxis()
 
     fig.suptitle('Time: %.3f Myr'%(t_curr*1e-6/(365.25*24*3600)))
@@ -158,6 +159,7 @@ def plotSeveralVars(grid, vxb, vyb, L_x, L_y, ntstp, t_curr):
     # Add temperature contours
     cs = axs[2].contour(X, Y, grid.T-273, levels=temp_levels, colors='w', linewidths=0.8)
     axs[2].clabel(cs, inline=True, fontsize=8, fmt='%d C')
+
 
     fig.suptitle('Time: %.3f Myr'%(t_curr*1e-6/(365.25*24*3600)))
 

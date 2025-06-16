@@ -9,7 +9,6 @@ import numpy as np
 from numba import jit, float64, int64
 from numba.experimental import jitclass
 
-
 spec_mark = [
      ('xnum', int64),
      ('ynum', int64),
@@ -69,7 +68,8 @@ class Markers():
     P : ARRAY
         Marker pressure
     gII : ARRAY
-        E_rat : ARRAY
+        Marker accumulated strain
+    E_rat : ARRAY
         eii_marker/eii_grid ratio.
     epsii : ARRAY
         Marker deviatoric strain rate
@@ -132,9 +132,49 @@ spec_mat = [
 ]
 @jitclass(spec_mat)       
 class Materials():
+    '''
+    Class which stores the contents of material_properties.txt file
+
+    Attributes
+    ----------
+    num_materials : INT
+        number of materials listed in material_properties.txt
+    rho : ARRAY
+        Density parameters for each material: density, thermal expansion, compressibility
+    visc : ARRAY
+        Viscosity parameters fro each material:
+        model choice, cons visc, Ad, n, Ea, Va
+    mu : ARRAY
+        Shear modulus for each material.
+    plast : ARRAY
+        Plasticity parameters for each material:
+        C0, C1, sin(FI0), sin(FI1), gamma0, gamma1
+    Cp : ARRAY
+        Specific heat capacity for each material.
+    kT : ARRAY
+        Thermal conductivity parameters for each material:
+        k0, a
+    radH : ARRAY
+        Radiogenic heat production for each material.
+    
+    '''
     
     # creates and fills material properties from specified file
     def __init__(self, materialData):
+        '''
+        Constructor for the Materials class.
+
+        Parameters
+        ----------
+        materialData : ARRAY
+            Contents of the material_properties.txt file, loaded into a np array
+            using np.loadtxt.
+
+        Returns
+        -------
+        None.
+
+        '''
         
         # load the material parameters from a file
         #materialData = np.loadtxt(filename, skiprows=3, delimiter=",")
@@ -151,6 +191,7 @@ class Materials():
         # viscosity model parameters
         # 0 - choice of viscosity model (0 = constant visc, 1 = power law)
         # 1 - viscosity for constant model
+        # power law visc, eta = Ad * sigma**n * exp(-(Ea + Va*P)/RT)
         # 2 - Ad
         # 3 - n
         # 4 - Ea
@@ -161,12 +202,15 @@ class Materials():
         self.mu = materialData[:,9] 
         
         # plasticity parameters
-        # 0 - C0
-        # 1 - C1
-        # 2 - sin(FI0)
-        # 3 - sin(FI1)
-        # 4 - Gamma0
-        # 5 - Gamma1
+        # for details see eqns 14.10-12 in Gerya
+        
+        # 0 - C0 - cohesion, pre strain weakening
+        # 1 - C1 - cohesion, post strain weakening
+        # 2 - sin(FI0) - internal friction, pre-stain weakening 
+        # 3 - sin(FI1) - internal friction, post-strain weakening
+        # 4 - Gamma0 - for sig_ii < Gamma0, cohesion and friction = C0, sin(F0)
+        # 	       for gamma0 < sigii < gamma1, coh, frict given by eqn 14.10
+        # 5 - Gamma1 - for sigii > Gamma1, cohesion and friction = C0, sin(F0)
         self.plast = materialData[:,10:16]
         
         # Specific heat capacity
@@ -222,6 +266,87 @@ spec_grid = [
 
 @jitclass(spec_grid)
 class Grid():
+    '''
+    Class which contains all the grid quantities.
+    
+    Attributes
+    ----------
+    xnum : INT
+        Number of nodes in x-direction.
+    ynum : INT
+        Number of nodes in y-direction.
+    x : ARRAY
+        x-diection positions of basic nodes
+    y : ARRAY
+        y-direction positions of basic nodes.
+    xstp : ARRAY
+        x-direction spacing between basic nodes.
+    ystp : ARRAY
+        y-direction spacing between basic nodes.
+    rho : ARRAY
+        Density.
+    rhoCp : ARRAY
+        density * heat capacity, for use in Temperature solver
+    T : ARRAY
+        Temperature
+    kT : ARRAY
+        Thermal conductivity
+    H_a : ARRAY
+        Adiabatic heat
+    H_r : ARRAY
+        Radiogenic heat
+    wt : ARRAY
+        weights for markers to grid interpolation of basic properties
+    eta_s : ARRAY
+        Viscosity for shear stress calculation.
+    wt_eta_s : ARRAY
+        weights for markers to interpolation of shear stress quantities
+    sigxy : ARRAY
+        Shear stresses
+    mu_s : ARRAY
+        shear modulus for shear stresses
+    epsxy : ARRAY
+        shear strain rate
+    sigxy2 : ARRAY
+        Updated shear stress (after Stoke's solve).
+    dsigxy : ARRAY
+        shear stress difference, for subgrid stress difference.
+    espin : ARRAY
+        spin tensor (for rotation of stress components).
+    P : ARRAY
+        Pressure
+    eta_n : ARRAY
+        Viscosity for normal stress calculations.
+    wt_eta_n : ARRAY
+        Weights for markers to interpolation of normal stress quantities
+    sigxx : ARRAY
+        Normal stresses
+    mu_n : ARRAY
+        shear modulus for normal stresses
+    epsxx : ARRAY
+        Normal strain rate
+    sigxx2 : ARRAY
+        Updated normal stress (after Stoke's solve).
+    dsigxx : ARRAY
+        Normal stress difference, for subgrid stress difference.
+    espii : ARRAY
+        Deviatoric strain rate.
+    vx : ARRAY
+        x-direction velocities
+    vy : ARRAY
+        y-direction velocities
+    cx : ARRAY
+        cell-centered node x-positions
+    cy : ARRAY
+        cell-centered node y-positions
+    xstpc : ARRAY
+        centered node x spacings
+    ystpc : ARRAY
+        centered node y spacings
+        
+    
+    '''
+    
     
     # creates empty grid structures
     def __init__(self, xnum, ynum):
