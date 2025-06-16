@@ -8,8 +8,10 @@ File which contains the setup for a lithospheric extension model
 import numpy as np
 import pathlib
 import math
+from numba import jit, float64, int64
+from numba.experimental import jitclass
 
-from dataStructures import Markers, Parameters, Grid, Materials
+from dataStructures import Markers, Grid, Materials
 from physics.grid_fns import gridSpacings
 
 
@@ -302,6 +304,7 @@ spec_par = [
     ('gy', float64),
     ('Rgas', float64),
     ('T_top', float64),
+    ('T_min', float64),
     ('T_bot', float64),
     ('v_ext', float64),
     ('eta_min', float64),
