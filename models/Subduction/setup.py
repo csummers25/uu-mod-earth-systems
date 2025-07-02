@@ -438,7 +438,7 @@ class Parameters():
         self.max_pow_law = 150                  # maximum power law exponent in visc model
         
         # timestepping
-        self.t_end = 3E6*(365.24*24*3600)       # end time: Does not work
+        self.t_end = 3e6*(365.24*24*3600)       # end time, simulation will exit if this is reached before max number of timesteps elapsed
         self.ntstp_max =  680                   # maximum number of timesteps 
         self.Temp_stp_max = 20                  # maximum number of temperature substeps
         
