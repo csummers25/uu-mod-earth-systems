@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-File which contains the setup for a lithospheric extension model
+File which contains the setup for a Subduction model
 
 """
 
@@ -12,7 +12,6 @@ from numba import jit, float64, int64
 from numba.experimental import jitclass
 
 from dataStructures import Markers, Grid, Materials
-from physics.grid_fns import gridSpacings
 
 
 def initialize_markers(markers, materials, params, xsize, ysize):
@@ -285,7 +284,7 @@ def initializeModel():
     grid = Grid(xnum, ynum)
 
     # define grid points for (potentially) unevenly spaced grid
-    gridSpacings(params.bx, params.by, params.Nx, params.Ny, params.non_uni_xsize, xsize, ysize, grid, 0)
+    g = gridSpacings(params, xsize, ysize, grid, 0)
 
     ############################################################################
     # create markers object
@@ -299,12 +298,146 @@ def initializeModel():
     return params, grid, materials, markers, xsize, ysize, P_first, B_top, B_bottom,\
            B_left, B_right, B_intern, BT_top, BT_bottom, BT_left, BT_right
     
+
+
+
+def gridSpacings(params, xsize, ysize, grid, t_curr):
+    '''
+    Calculates the new grid point spacings based on the current xsize and ysize.
+    This version contructs a non-uniform grid with a central-upper high resolution region
+    and decreasing resolution outward from this.
+
+    Parameters
+    ----------
+    params : Parameters Class
+        Parameters object containing all simulation parameters for the system.
+    xsize : FLOAT
+        Physical size of the system in x-direction.
+    ysize : FLOAT
+        Physical size of the system in y-direction.
+    grid : OBJ
+        The grid object into which the new node positions will be written.
+    t_curr : FLOAT
+        The current simulation time, to determine whether to set up grid from scratch
+        or extend an existing one.
+
+    Returns
+    -------
+    None.
+
+    '''
+    
+    if (t_curr > 0 and params.const==1):
+        # we don't need to recalculate the grid, return here!
+        return 0
+    
+    xnum = grid.xnum
+    ynum = grid.ynum
+    
+    # pull out the required parameters from params object
+    bx = params.bx
+    by = params.by
+    Nx = params.Nx
+    Ny = params.Ny
+    
+    non_uni_xsize = params.non_uni_xsize
+    N_end = params.N_end
+    b_end = params.b_end
+    
+    ###############################################################################
+    # Horizontal grid
+    
+    # xsize - region of fixed grid at the end
+    xsize_norm = xsize - N_end*b_end
+    
+    # grid point number at which the non-uniform grid ends
+    xnum_ad = xnum - N_end
+
+    if (t_curr==0):
+        # set the points in the high res area
+        # this only needs doing on the initial setup
+        grid.x[Nx] = non_uni_xsize 
+        for i in range(Nx+1,xnum_ad-Nx):  #xnum
+            grid.x[i] = grid.x[i-1] + bx
+            
+        # size of the non-uniform region 
+        D = xsize_norm - grid.x[xnum_ad-Nx-1]
+
+    else:
+        
+        # set the new position of the first node,
+        # and the size of the non-uniform region
+        grid.x[0] = grid.x[int(xnum/2)] - xsize/2
+        D = xsize/2 - (grid.x[xnum-Nx-1] - grid.x[int(xnum/2)])
+        
+    
+    # define factor of grid spacing to increase to the right of high res area
+    # need to only do this for non-uniform def, otherwise div by 0!
+    if (Nx > 0):
+        F = 1.1
+        # iteratively solve for F
+        for i in range(0,200):
+            F = (1 + D/bx*(1 - 1/F))**(1/Nx)
+    
+        # define grid points to the right of the high-res region
+        for i in range(xnum_ad-Nx, xnum_ad):   #was xnum
+            grid.x[i] = grid.x[i-1] + bx*F**(i-(xnum_ad-Nx-1))
+            
+        # we have a set of fixed resolution points at the upper edge of the grid 
+        for i in range(xnum_ad, xnum):
+            grid.x[i] = grid.x[i-1] + b_end
+        
+        if (t_curr==0):
+            grid.x[xnum-1] = xsize
+            grid.x[xnum_ad-1] = xsize_norm
+    
+        # now do the same going leftward
+        D = grid.x[Nx] - grid.x[0] # think this should still work for inital case?
+    
+        F = 1.1
+        for i in range(0,100):
+            F = (1 + D/bx*(1 - 1/F))**(1/Nx)
+    
+        # set the points left of the high res region
+        for i in range(1,Nx):
+            grid.x[i] = grid.x[i-1] + bx*F**(Nx+1-i)
+        
+    
+    ###########################################################################
+    # Vertical grid
+    # one-sided, there is high resolution at the top of the grid and then a decreasing region below
+
+    # set the high resolution area, assumes y[0] = 0
+    for i in range(1,ynum-Ny):
+        grid.y[i] = grid.y[i-1] + by
+      
+    
+    if (Ny > 0):
+        # size of the non-uniform regions
+        D = ysize - grid.y[ynum-Ny-1]
+       
+        # solve iteratively for scaling factor
+        F = 1.1
+        for i in range(0,100):
+            F = (1 + D/by*(1 - 1/F))**(1/Ny)
+            # set the grid points below the high-res region
+        for i in range(ynum-Ny, ynum):
+            grid.y[i] = grid.y[i-1] + by*F**(i-(ynum-Ny-1))
+           
+        # fix the end position if this is the first step
+        if (t_curr==0):
+            grid.y[ynum-1] = ysize
+
+    # need a return statement, since we conditionally return early if the grid is constant
+    return 1
+
+
 spec_par = [
     ('gx', float64),
     ('gy', float64),
     ('Rgas', float64),
-    ('T_top', float64),
     ('T_min', float64),
+    ('T_top', float64),
     ('T_bot', float64),
     ('v_ext', float64),
     ('eta_min', float64),
@@ -328,6 +461,9 @@ spec_par = [
     ('Nx', int64),
     ('Ny', int64),
     ('non_uni_xsize', float64),
+    ('const', int64),
+    ('N_end', int64),
+    ('b_end', float64),
     ('save_output', int64),
     ('save_fig', int64),
 ]
@@ -348,6 +484,10 @@ class Parameters():
         Ideal gas constant.
     T_min : FLOAT
         Minimum allowed temperature.
+    T_top : FLOAT
+        Temperature at the upper boundary.
+    T_bot : FLOAT
+        Temperature on the lower boundary.
     v_ext : FLOAT
         Grid extension velocity, for deforming grid.
     eta_min : FLOAT
@@ -395,14 +535,16 @@ class Parameters():
     non_uni_size: FLOAT
         Physical size of the non-uniform grid region in the x-direction.  For 
         uniform grid this should be 0.
+    const : INT
+        Flag which determines if the grid points are fixed during the simulation or not
+    N_end: INT
+        Number of additional uniform grid points added at upper end of x-grid points
+    b_end : FLOAT
+        Spacing of additional uniform grid points added at upper end of the x-grid points
     save_output : INT
         Number of steps between output, not currently implemented.
     save_fig : INT
         Number of steps between plotting of figures.
-    T_top : FLOAT
-        Temperature at the top of the simulation domain.
-    T_bot : FLOAT
-        Temperature at the bottom of the simulation domain.
     
     
     '''
@@ -426,9 +568,11 @@ class Parameters():
         self.Rgas = 8.314                       # gas constant
         
         # physical model setup
-        self.T_min = 273                        # temperature at the top face of the model (K)
-        self.T_top = self.T_min
+        self.T_min = 273                        # Minimum allowed temperature in the simulation
+        self.T_top = self.T_min                 # temperature at the top face of the model (K)
         self.T_bot = 1825                       # temperature at the bottom face of the model (K)
+        
+        self.v_ext = 0.0                        # extension velocity of the grid (cm/yr)
         
         # viscosity model
         self.eta_min = 1e18                     # minimum viscosity
@@ -464,10 +608,15 @@ class Parameters():
         self.Nx = 24                            # number of unevenly spaced grid pointss either side of high res zone
         self.Ny = 15                            # number of unvenly spaced grid points below high res zone
         self.non_uni_xsize = 175000             # physical x-size of non-uniform grid region left of the high res zone
+        self.const = 1                          # flag which determines whether grid remains constant or not
+        
+        self.N_end = 4                          # number of additional uniform grid points at the upper edge of grid in x-direction
+        self.b_end = 40e3                       # grid spacing in uniform region at upper edge
         
         # output options
         self.save_output = 50                    # number of steps between output files
-        self.save_fig = 12                        # number of steps between figure output    
+        self.save_fig = 12                       # number of steps between figure output    
+    
     
 
 
