@@ -14,5 +14,5 @@ Visualisation
 
 The ``visualisation.py`` file contains some basic functions for plotting.  To change what variables are plotted, simply change the grid variable in the plot command within these functions to your chosen variable.  :py:class:`dataStructures.Grid` shows the available grid variables for plotting.
 
-
+.. note:: The colorbar limits and plotting areas are set manually in the plotting functions, you should adjust these to fit your simulation.
 
