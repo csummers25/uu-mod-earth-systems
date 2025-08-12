@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+
 """
 main file for the Visco-elastic-plastic model - run this to run the model!
 
@@ -17,7 +18,7 @@ import os
 # if debugging, this should be 1 AND jitclass tags in dataStructures must be commented out!
 os.environ["NUMBA_DISABLE_JIT"] = "0"
 # if 1 prints out extra statements at various places in the timeloop
-debug = 0
+debug = 1
 
 # load the component fucntions from their respective files
 from dataStructures import Markers, Materials, Grid, copyGrid

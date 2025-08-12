@@ -86,7 +86,7 @@ def plotAVar(grid, vxb, vyb, L_x, L_y, ntstp, t_curr):
 
     fig.suptitle('Time: %.3f Myr'%(t_curr*1e-6/(365.25*24*3600)))
     fig.savefig('./Figures/temp_tstp_%i.png'%(ntstp))
-    #plt.close()
+
 
 def plotSeveralVars(grid, vxb, vyb, L_x, L_y, ntstp, t_curr):
     '''
@@ -134,15 +134,16 @@ def plotSeveralVars(grid, vxb, vyb, L_x, L_y, ntstp, t_curr):
     fig.colorbar(im, ax=axs[0],pad=0.0) # display colorbar
     axs[0].set_title('Density (kg/m3) ')     # set plot title
     axs[0].set(ylabel='y (m)')         # label the y-axis (shared axis for x)
+    
+    # add velocity arrows, not at every cell, step sets the spacing
     step = 5
-    # Add velocity arrows
     qu = axs[0].quiver(X[::step, ::step], Y[::step, ::step], vxb[:yres,:][::step, ::step], np.flip(-vyb[:,:xres],0)[::step, ::step])	    
     # Add temperature contours
     cs = axs[0].contour(X, Y, grid.T-273, levels=temp_levels, colors='w', linewidths=0.8)
     axs[0].clabel(cs, inline=True, fontsize=8, fmt='%d C')
     axs[0].invert_yaxis()
 
-    #Viscosity
+    # Viscosity
     im = axs[1].pcolor(X, Y, np.log10(grid.eta_n),vmin=18, vmax=28)
     fig.colorbar(im, ax=axs[1],pad=0.0) # display colorbar
     axs[1].set(ylabel='y (m)')         # label the y-axis (shared axis for x)
@@ -164,7 +165,6 @@ def plotSeveralVars(grid, vxb, vyb, L_x, L_y, ntstp, t_curr):
     fig.suptitle('Time: %.3f Myr'%(t_curr*1e-6/(365.25*24*3600)))
 
     fig.savefig('./Figures/densT_tstp_%i.png'%(ntstp))
-    #plt.close()
 
 
 def plotMarkerFields(xsize, ysize, markers, grid, ntstp, t_curr):
@@ -255,9 +255,14 @@ def get_marker_fields_vis(xsize, ysize, markers, grid):
 
     '''
     
-    # define the image resolution
-    xres = int(xsize/1000) + 1
-    yres = int(ysize/1000) + 1
+    # define the image resolution - want it to be about 100s in each dimension
+    # but proportional to the grid size in each direction
+    
+    xres = 401
+    yres = int(ysize/xsize*xres) + 1
+    
+    # xres = int(xsize/1000) + 1
+    # yres = int(ysize/1000) + 1
     
     ngrid = 2
     
