@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+
 """
 main file for the Visco-elastic-plastic model - run this to run the model!
 
@@ -17,7 +18,7 @@ import os
 # if debugging, this should be 1 AND jitclass tags in dataStructures must be commented out!
 os.environ["NUMBA_DISABLE_JIT"] = "0"
 # if 1 prints out extra statements at various places in the timeloop
-debug = 0
+debug = 1
 
 # load the component fucntions from their respective files
 from dataStructures import Markers, Materials, Grid, copyGrid
@@ -26,12 +27,12 @@ from physics.StokesContinuitySolver import StokesContinuitySolver, constructStok
 from physics.TemperatureSolver import TemperatureSolver, constructTempRHS
 from physics.markers_fns import markersToGrid, gridToMarker, updateMarkerErat, subgridStressChanges,\
                         subgridDiffusion, advectMarkers
-from physics.grid_fns import updateStresses, viscElastStress, strainRateComps, gridSpacings
+from physics.grid_fns import updateStresses, viscElastStress, strainRateComps
 
 from visualisation import plotAVar, plotSeveralVars, plotMarkerFields, basicGridVelocities
 
 # load the setup fn for the chosen model
-from models.Subduction.setup import initializeModel
+from models.Subduction.setup import initializeModel, gridSpacings
 
 
 
@@ -298,10 +299,10 @@ for nt in range(0, params.ntstp_max):
         print('updating grid spacings')
     
     # update grid positions based on extension
-    # ysize += -params.v_ext/xsize*ysize*timestep
-    # xsize += params.v_ext*timestep
+    ysize += -params.v_ext/xsize*ysize*timestep
+    xsize += params.v_ext*timestep
     
-    #gridSpacings(params.bx, params.by, params.Nx, params.Ny, params.non_uni_xsize, xsize, ysize, grid, time_curr)
+    g = gridSpacings(params, xsize, ysize, grid, time_curr)
     
     # if we have changing grid, need to update bottom BC
     if (abs(params.v_ext)>0):

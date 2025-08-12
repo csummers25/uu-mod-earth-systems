@@ -6,7 +6,6 @@ Simple intrusion with visc, T,  density contrast
 import numpy as np
 
 from dataStructures import Markers, Grid, Materials
-from physics.grid_fns import gridSpacings
 import pathlib
 
 from numba import jit, float64, int64
@@ -77,8 +76,7 @@ def initializeModel():
     
     # instantiate a pre-populated parameters object
     params = Parameters()
-    
-    params.v_ext = 0.0
+
     
 
     # additional model options 
@@ -93,12 +91,6 @@ def initializeModel():
     xnum = 31
     ynum = 21
     
-    params.bx = xsize/(xnum-1)
-    params.by = ysize/(ynum-1)
-    params.Nx = 0
-    params.Ny = 0
-    params.non_uni_xsize = 0
-
 
     # instantiate/load material properties object
     matData = np.loadtxt('./models/simpleStokesTest/material_properties_simple.txt', delimiter=",")
@@ -154,7 +146,7 @@ def initializeModel():
     
 
     # define grid points for (potentially) unevenly spaced grid
-    gridSpacings(params.bx, params.by, params.Nx, params.Ny, params.non_uni_xsize, xsize, ysize, grid, 0)
+    gridSpacings(params, xsize, ysize, grid, 0)
 
     ############################################################################
     # create markers object
@@ -219,6 +211,62 @@ def initialize_markers(markers, materials, params, xsize, ysize):
             
             # update marker index
             mm +=1
+
+
+def gridSpacings(params, xsize, ysize, grid, t_curr):
+    '''
+    Calculates the new grid point spacings based on the current xsize and ysize.
+    This version contructs a non-uniform grid with a central-upper high resolution region
+    and decreasing resolution outward from this.
+
+    Parameters
+    ----------
+    params : Parameters Class
+        Parameters object containing all simulation parameters for the system.
+    xsize : FLOAT
+        Physical size of the system in x-direction.
+    ysize : FLOAT
+        Physical size of the system in y-direction.
+    grid : OBJ
+        The grid object into which the new node positions will be written.
+    t_curr : FLOAT
+        The current simulation time, to determine whether to set up grid from scratch
+        or extend an existing one.
+
+    Returns
+    -------
+    None.
+
+    '''
+    
+    if (t_curr > 0 and params.const==1):
+        # we don't need to recalculate the grid, return here!
+        return 0
+    
+    xnum = grid.xnum
+    ynum = grid.ynum
+    
+    dx = xsize/(xnum-1)
+    dy = ysize/(ynum-1)
+    
+    
+    # Simple, uniform grid
+    if (t_curr == 0):
+        
+        # horizontal grid
+        grid.x[0] = 0
+        for i in range(1,xnum):
+            grid.x[i] = grid.x[i-1] + dx
+        
+        # vertical grid
+        grid.y[0] = 0
+        for i in range(1,ynum):
+            grid.y[i] = grid.y[i-1] + dy
+    
+    if (params.const==0):
+        raise ValueError('Moving, uniform grid is not implemented!')
+    
+
             
 spec_par = [
     ('gx', float64),
@@ -242,11 +290,7 @@ spec_par = [
     ('dsubgridT', float64),
     ('frict_yn', float64),
     ('adia_yn', float64),
-    ('bx', float64),
-    ('by', float64),
-    ('Nx', int64),
-    ('Ny', int64),
-    ('non_uni_xsize', float64),
+    ('const', int64),
     ('save_output', int64),
     ('save_fig', int64),
 ]
@@ -298,21 +342,8 @@ class Parameters():
         Flag to apply friction heating.
     adia_yn : FLOAT
         Flag to apply adiabatic heating.
-    bx: FLOAT
-        x-grid spacing in the high resolution region of the grid.  For uniform grid
-        this should be xsize/(xnum-1).
-    by: FLOAT
-        y-grid spacing in the high resolution region of the grid.  For uniform grid
-        this should be ysize/(ynum-1).
-    Nx: INT
-        Number of uneven grid cells either side of the central high resolution 
-        region in the x-direction, for uniform grid this should be 0.
-    Ny: INT
-        Number of uneven grid cells below the high resolution 
-        region in the y-direction, for uniform grid this should be 0.
-    non_uni_size: FLOAT
-        Physical size of the non-uniform grid region in the x-direction.  For 
-        uniform grid this should be 0.
+    const : INT
+        Flag which determines if the grid points are fixed during the simulation or not
     save_output : INT
         Number of steps between output, not currently implemented.
     save_fig : INT
@@ -326,8 +357,6 @@ class Parameters():
     def __init__(self):
         '''
         Constructor for the parameters class
-        
-        Sets the default (lithsphere extension) values for all params
 
         Returns
         -------
@@ -344,7 +373,7 @@ class Parameters():
         # physical model setup
         self.T_min = 273                        # temperature at the top face of the model (K)
         
-        self.v_ext = 2.0/(100*365.25*24*3600)   # extension velocity of the grid (cm/yr)
+        self.v_ext = 0.0                        # extension velocity of the grid (cm/yr)
         
         # viscosity model
         self.eta_min = 1e18                     # minimum viscosity
@@ -355,7 +384,7 @@ class Parameters():
         
         
         # timestepping
-        self.t_end = 72e3/self.v_ext            # end time
+        self.t_end = 3e6*(365.24*24*3600)       # end time
         self.ntstp_max = 360                    # maximum number of timesteps
         self.Temp_stp_max = 20                  # maximum number of temperature substeps
         
@@ -376,11 +405,7 @@ class Parameters():
         self.adia_yn = 1                        # use adiabatic heating?
         
         # grid spacing params
-        self.bx = 2000                          # x-grid spacing in high res area
-        self.by = 2000                          # y-grid spacing in high res area
-        self.Nx = 30                            # number of unevenly spaced grid points either side of high res zone
-        self.Ny = 20                            # number of unvenly spaced grid points below high res zone
-        self.non_uni_xsize = 100000             # physical x-size of non-uniform grid region
+        self.const = 1                          # flag which determines whether grid remains constant or not
         
         # output options
         self.save_output = 50                        # number of steps between output files

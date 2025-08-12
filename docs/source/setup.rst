@@ -1,7 +1,7 @@
 Setting up a model
 ==================
 
-To set up a model, first create a new directory in the models directory, with a name that describes what your model will be.  This directory needs to contain a version of ``setup.py`` and a ``material_properties.txt``.  The ``setup.py`` file contains two functions:
+To set up a model, first create a new directory in the models directory, with a name that describes what your model will be.  This directory needs to contain a version of ``setup.py`` and a ``material_properties.txt``.  The ``setup.py`` file contains three functions:
 
 :py:func:`models.lithosphereExtension.setup.initializeModel`
 
@@ -11,11 +11,19 @@ which is used to set boundary conditions and required parameters for a simulatio
 
 which is called by ``initializeModel`` and creates and distributes the markers across the simulation domain.  This function is where the initial material properties and temperatures are defined, based on a marker's position.  This ``initializeModel`` instance should be imported by changing the import path in the ``main.py`` script to match the directory path of you newly created model. 
 
+The final function,
+
+:py:func:`models.lithosphereExtension.setup.gridSpacings`
+
+sets up the grid geometry itself.  There are a few implementations of this function already included, the simplest case of a uniform grid is implemented in the ``SimpleStokes`` model.  The ``lithosphereExtension`` model uses a grid with a fixed high resolution area in the upper central region of the domain, with an increasing grid spacing moving outward.  This version also expands over time.  Finally, the ``Subduction`` model sets up a static Swiss Cross grid.
+
+For your own simulation, you can either copy one of these geometries or create your own implementation.  Each version requires certain parameters to be defined in the ``Parameters`` object.
+
 .. note:: The easiest way to create a new setup is to copy an existing one and edit it! 
 
-There should also be a copy of the Parameters object in ```setup.py```.  This defines all the numerical and physical parameters required for your simulation, there is a base set of parameters that are required for any simulation, which are shown in the example implementation.  You can also add further parameters, by copying the Parameters definition to your setup.py and adding extra attributes, remembering to also add their types to the spec_par list.
+There should also be a copy of the Parameters object in ``setup.py``.  This defines all the numerical and physical parameters required for your simulation, there is a base set of parameters that are required for any simulation, which are shown in the example implementation.  You can also add further parameters, by copying the Parameters definition to your setup.py and adding extra attributes, remembering to also add their types to the spec_par list.
   
-.. note:: This cannot be done by creating a class that inherits from the example as ```jitclass``` does not support inheritance.
+.. note:: This cannot be done by creating a class that inherits from the example as ``jitclass`` does not support inheritance.
 
 Material Properties
 -------------------
