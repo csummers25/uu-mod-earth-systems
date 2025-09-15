@@ -14,11 +14,13 @@ from numba import jit
 from copy import deepcopy
 from time import time
 import os
+import shutil
 
 # if debugging, this should be 1 AND jitclass tags in dataStructures must be commented out!
 os.environ["NUMBA_DISABLE_JIT"] = "0"
 # if 1 prints out extra statements at various places in the timeloop
 debug = 1
+model_name = "lithosphereExtension"
 
 # load the component fucntions from their respective files
 from dataStructures import Markers, Materials, Grid, copyGrid
@@ -29,14 +31,10 @@ from physics.markers_fns import markersToGrid, gridToMarker, updateMarkerErat, s
                         subgridDiffusion, advectMarkers
 from physics.grid_fns import updateStresses, viscElastStress, strainRateComps
 
-from visualisation import plotAVar, plotSeveralVars, plotMarkerFields, basicGridVelocities
+exec(f"from models.{model_name}.visualisation import plotAVar, plotSeveralVars, plotMarkerFields, plotMarkerFields2, basicGridVelocities, plotMarkerFields_Lithology")
 
 # load the setup fn for the chosen model
-from models.Subduction.setup import initializeModel, gridSpacings
-
-
-
-
+exec(f"from models.{model_name}.setup import initializeModel, gridSpacings")
 
 strt = time()
 ###############################################################################
@@ -288,6 +286,9 @@ for nt in range(0, params.ntstp_max):
         plotAVar(grid, vxb, vyb, xsize, ysize, nt, time_curr)
         plotSeveralVars(grid, vxb, vyb, xsize, ysize, nt, time_curr)
         plotMarkerFields(xsize, ysize, markers, grid, nt, time_curr)
+        plotMarkerFields2(xsize, ysize, markers, grid, nt, time_curr)
+        plotMarkerFields_Lithology(xsize, ysize, markers, grid, nt, time_curr)
+
     
     
     ###########################################################################
@@ -315,5 +316,9 @@ for nt in range(0, params.ntstp_max):
         break
 
 end = time() - strt
+dest_dir = f"models/{model_name}/Figures"
+if os.path.exists(dest_dir):
+    shutil.rmtree(dest_dir)
+shutil.move("Figures", f"models/{model_name}/")
 print('time elapsed: %f'%(end))    
 
