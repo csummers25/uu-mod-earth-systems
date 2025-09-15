@@ -81,11 +81,11 @@ def plotAVar(grid, vxb, vyb, L_x, L_y, ntstp, t_curr):
     im = axs.pcolor(X, Y, grid.T-273, shading='nearest', vmin=0, vmax=1400)
     fig.colorbar(im, ax=axs,pad=0.0)                                        # display colorbar
     axs.set_title('Temperature (C)')                                        # set plot title
-    axs.set(ylabel='y (km)', xlabel='x (km)', xlim=(75e3, 325e3), ylim=(0, 120e3))                               # label the y-axis and x-axis
+    axs.set(ylabel='y (km)', xlabel='x (km)')                               # label the y-axis and x-axis
     axs.invert_yaxis()                                                      # plot increasing depth downward! 
 
     fig.suptitle('Time: %.3f Myr'%(t_curr*1e-6/(365.25*24*3600)))
-    fig.savefig('./Figures/temp_%i.png'%(ntstp))
+    fig.savefig('./Figures/temp_tstp_%i.png'%(ntstp))
 
 
 def plotSeveralVars(grid, vxb, vyb, L_x, L_y, ntstp, t_curr):
@@ -134,7 +134,7 @@ def plotSeveralVars(grid, vxb, vyb, L_x, L_y, ntstp, t_curr):
     im = axs[0].pcolor(X, Y, grid.rho, shading='nearest', vmin=2200, vmax=3500)
     fig.colorbar(im, ax=axs[0],pad=0.0)        # display colorbar
     axs[0].set_title('Density (kg/m3) ')       # set plot title
-    axs[0].set(ylabel='y (m)', xlim=(75e3, 325e3), ylim=(120, 0e3))                 # label the y-axis (shared axis for x)
+    axs[0].set(ylabel='y (m)')                 # label the y-axis (shared axis for x)
     
     # add velocity arrows, not at every cell, step sets the spacing
     step = 5
@@ -148,19 +148,19 @@ def plotSeveralVars(grid, vxb, vyb, L_x, L_y, ntstp, t_curr):
     axs[0].invert_yaxis()
 
     # Viscosity
-    im = axs[1].pcolor(X, Y, np.log10(grid.eta_n),vmin=18, vmax=25)
+    im = axs[1].pcolor(X, Y, np.log10(grid.eta_n),vmin=18, vmax=28)
     fig.colorbar(im, ax=axs[1],pad=0.0)                 # display colorbar
-    axs[1].set(ylabel='y (m)', xlim=(75e3, 325e3), ylim=(120e3, 0e3))                          # label the y-axis (shared axis for x)
+    axs[1].set(ylabel='y (m)')                          # label the y-axis (shared axis for x)
     axs[1].set_title('Viscosity log10(Pa s)')           # set plot title
     
     # Add temperature contours
     cs = axs[1].contour(X, Y, grid.T-273, levels=temp_levels, colors='w', linewidths=0.8)
     axs[1].clabel(cs, inline=True, fontsize=8, fmt='%d C')
 
-    # Pressure
+	# Pressure
     im = axs[2].pcolor(X, Y, grid.P, shading='flat',vmin=0.1e9,vmax=9e9)
     fig.colorbar(im, ax=axs[2],pad=0.0)                 # display colorbar
-    axs[2].set(ylabel='y (m)', xlabel='x (m)', xlim=(75e3, 325e3), ylim=(120e3, 0e3))          # label the x and y-axis
+    axs[2].set(ylabel='y (m)', xlabel='x (m)')          # label the x and y-axis
     axs[2].set_title('Pressure (Pa)')                   # set plot title
     
     # Add temperature contours
@@ -170,9 +170,79 @@ def plotSeveralVars(grid, vxb, vyb, L_x, L_y, ntstp, t_curr):
 
     fig.suptitle('Time: %.3f Myr'%(t_curr*1e-6/(365.25*24*3600)))
     
-    fig.savefig('./Figures/densT_%i.png'%(ntstp))
+    fig.savefig('./Figures/densT_tstp_%i.png'%(ntstp))
 
+
+def plotMarkerFields(xsize, ysize, markers, grid, ntstp, t_curr):
+    '''
+    Plot the lithology and accumulated strain recorded by the markers.
+
+    Parameters
+    ----------
+    xsize : FLOAT
+        Physical x-size of the simulation domain.
+    ysize : FLOAT
+        Physical y-size of the simulation domain.
+    markers : Markers object
+        Contains all the marker values for each variable.
+    grid : Grid object
+        Contains all the grid variables at the current time.
+    ntstp : INT
+        Current timestep number.
+    t_curr : FLOAT
+        Current time (s).
+
+    Returns
+    -------
+    None.
+
+    '''
+    # first calculate a grid of interpolated marker values
+    mark_com, mark_gii, mark_sigmaxx = get_marker_fields_vis(xsize, ysize, markers, grid)
+    
+    # create figure, subplots
+    fig = figure.Figure(figsize=(18,18), constrained_layout=True)
+    axs = fig.subplots(3,1, sharex=True)
+    
+    # create image grid and temperature contour levels
+    X, Y = np.meshgrid(grid.x, grid.y)
+    temp_levels = [100, 150, 350, 450, 1300]
+
+    # plot the lithology as colormap
+    im = axs[0].imshow(mark_com, origin='upper', aspect='auto', extent=[0,xsize,ysize,0])
+    fig.colorbar(im, ax=axs[0],pad=0.0)                                                 # display colorbar
+    axs[0].set_title('Lithology')                                                       # set plot title
+    axs[0].set(ylabel='y (m)', xlim=(0e3, 600e3), ylim=(200e3, 0))                      # labels, limits
+    
+    # add temperature contours
+    cs = axs[0].contour(X, Y, grid.T-273, levels=temp_levels, colors='w', linewidths=0.8)
+    axs[0].clabel(cs, inline=True, fontsize=8, fmt='%d C')                     
+    
+    # plot accumulated strain 
+    im = axs[1].imshow(np.log10(mark_gii), origin='upper', aspect='auto', extent=[0,xsize,ysize,0], vmin=-2, vmax=2)
+    fig.colorbar(im, ax=axs[1],pad=0.0)                                                 # display colorbar
+    axs[1].set_title('Strain')                                                          # set plot title
+    axs[1].set(ylabel = 'y (m)',  xlim=(0e3, 600e3), ylim=(200e3, 0))                   # labels, limits
+    
+    # add temperature contours
+    cs = axs[1].contour(X, Y, grid.T-273, levels=temp_levels, colors='w', linewidths=0.8)
+    axs[1].clabel(cs, inline=True, fontsize=8, fmt='%d C')
+    
+    # plot normal stress components
+    im = axs[2].imshow(mark_sigmaxx, origin='upper', aspect='auto', extent=[0,xsize,ysize,0])
+    fig.colorbar(im, ax=axs[2],pad=0.0)                                                 # display colorbar
+    axs[2].set_title('Normal stress (Pa)')                                              # set plot title
+    axs[2].set(xlabel='x (m)', ylabel = 'y (m)',  xlim=(0e3, 600e3), ylim=(200e3, 0))   # labels, limits
+    
+    # add temperature contours
+    cs = axs[2].contour(X, Y, grid.T-273, levels=temp_levels, colors='w', linewidths=0.8)
+    axs[2].clabel(cs, inline=True, fontsize=8, fmt='%d C')
+
+    fig.suptitle('Time: %.3f Myr'%(t_curr*1e-6/(365.25*24*3600)))
+    fig.savefig('./Figures/lithology_tstp_%i.png'%(ntstp))
+    
 def plotMarkerFields_Lithology(xsize, ysize, markers, grid, ntstp, t_curr):
+    
     '''
     Plot the lithology recorded by the markers.
 
@@ -195,102 +265,12 @@ def plotMarkerFields_Lithology(xsize, ysize, markers, grid, ntstp, t_curr):
     -------
     None.
 
-    '''
-    # first calculate a grid of interpolated marker values
-    mark_com, mark_gii, mark_sigmaxx, mark_epsxx, mark_epsxy, mark_epsii, mark_sigmaii, mark_sigmaxy = get_marker_fields_vis(xsize, ysize, markers, grid)
-
-    # create figure
-    fig = figure.Figure(figsize=(9,3), constrained_layout=True)
-    axs = fig.subplots(1,1, sharex=True, sharey=True)
-    
-    # create image grid and temperature contour levels
-    X, Y = np.meshgrid(grid.x, grid.y)
-    temp_levels = [100, 150, 350, 450, 1300]
-
-    # plot the lithology as colormap
-    im = axs.imshow(mark_com, origin='upper', aspect='auto', extent=[0,4e5,3e5,0])
-    fig.colorbar(im, ax=axs,pad=0.0)                                                 # display colorbar
-    axs.set_title('Lithology')                                                       # set plot title
-    axs.set(ylabel='y (m)', xlabel ='x (m)', xlim=(75e3, 325e3), ylim=(120e3, 0e3))                                         # labels, limits       
-
-    # add temperature contours
-    cs = axs.contour(X, Y, grid.T-273, levels=temp_levels, colors='w', linewidths=0.8)
-    axs.clabel(cs, inline=True, fontsize=8, fmt='%d C')                     
-                     
-    
-    fig.suptitle('Time: %.3f Myr'%(t_curr*1e-6/(365.25*24*3600)))
-    fig.savefig('./Figures/litho_%i.png'%(ntstp))
-
-
-def plotMarkerFields(xsize, ysize, markers, grid, ntstp, t_curr):
-    '''
-    Plot the stress components recorded by the markers.
-
-    Parameters
-    ----------
-    xsize : FLOAT
-        Physical x-size of the simulation domain.
-    ysize : FLOAT
-        Physical y-size of the simulation domain.
-    markers : Markers object
-        Contains all the marker values for each variable.
-    grid : Grid object
-        Contains all the grid variables at the current time.
-    ntstp : INT
-        Current timestep number.
-    t_curr : FLOAT
-        Current time (s).
-
-    Returns
-    -------
-    None.
+    Not used for this type of model
 
     '''
-    # first calculate a grid of interpolated marker values
-    mark_com, mark_gii, mark_sigmaxx, mark_epsxx, mark_epsxy, mark_epsii, mark_sigmaii, mark_sigmaxy = get_marker_fields_vis(xsize, ysize, markers, grid)
-    
-    # create figure, subplots
-    fig = figure.Figure(figsize=(18,18), constrained_layout=True)
-    axs = fig.subplots(3,1, sharex=True)
-    
-    # create image grid and temperature contour levels
-    X, Y = np.meshgrid(grid.x, grid.y)
-    temp_levels = [100, 150, 350, 450, 1300]
 
-    # plot the stress as colormap
-    im = axs[0].imshow(mark_sigmaii, origin='upper', aspect='auto', extent=[0,4e5,3e5,0], vmin=0, vmax=200e6)             
-    fig.colorbar(im, ax=axs[0],pad=0.0)                                                 # display colorbar
-    axs[0].set_title('$\\sigma_{ii}$ (Pa)')                                                       # set plot title
-    axs[0].set(ylabel='y (m)', xlim=(75e3, 325e3), ylim=(80e3, 0e3))                      # labels, limits
-    
-    # add temperature contours
-    cs = axs[0].contour(X, Y, grid.T-273, levels=temp_levels, colors='w', linewidths=0.8)
-    axs[0].clabel(cs, inline=True, fontsize=8, fmt='%d C')                     
-    
-    # plot normal stress components 
-    im = axs[1].imshow(mark_sigmaxx, origin='upper', aspect='auto', extent=[0,4e5,3e5,0], vmin=-100e6, vmax=100e6)                     # extent=[0,xsize,ysize,0]
-    fig.colorbar(im, ax=axs[1],pad=0.0)                                                 # display colorbar
-    axs[1].set_title('$\\sigma_{xx}$ (Pa)')                                                          # set plot title
-    axs[1].set(ylabel = 'y (m)', xlim=(75e3, 325e3), ylim=(80e3, 0e3))                   # labels, limits
-    
-    # add temperature contours
-    cs = axs[1].contour(X, Y, grid.T-273, levels=temp_levels, colors='w', linewidths=0.8)
-    axs[1].clabel(cs, inline=True, fontsize=8, fmt='%d C')
-    
-    # plot shear stress components
-    im = axs[2].imshow(mark_sigmaxy, origin='upper', aspect='auto', extent=[0,4e5,3e5,0], vmin=-200e6, vmax=200e6)                     # extent=[0,xsize,ysize,0]
-    fig.colorbar(im, ax=axs[2],pad=0.0)                                                 # display colorbar
-    axs[2].set_title('$\\sigma_{xy}$ (Pa)')                                              # set plot title
-    axs[2].set(xlabel='x (m)', ylabel = 'y (m)', xlim=(75e3, 325e3), ylim=(80e3, 0e3))   # labels, limits
-    
-    # add temperature contours
-    cs = axs[2].contour(X, Y, grid.T-273, levels=temp_levels, colors='w', linewidths=0.8)
-    axs[2].clabel(cs, inline=True, fontsize=8, fmt='%d C')
-
-    fig.suptitle('Time: %.3f Myr'%(t_curr*1e-6/(365.25*24*3600)))
-    fig.savefig('./Figures/stress_%i.png'%(ntstp))
-    
 def plotMarkerFields2(xsize, ysize, markers, grid, ntstp, t_curr):
+
     '''
     Plot the strain rate components and accumulated strain recorded by the markers.
 
@@ -313,62 +293,9 @@ def plotMarkerFields2(xsize, ysize, markers, grid, ntstp, t_curr):
     -------
     None.
 
+    Also not used for this type of model
+
     '''
-    # first calculate a grid of interpolated marker values
-    mark_com, mark_gii, mark_sigmaxx, mark_epsxx, mark_epsxy, mark_epsii, mark_sigmaii, mark_sigmaxy = get_marker_fields_vis(xsize, ysize, markers, grid)
-    
-    # create figure, subplots
-    fig = figure.Figure(figsize=(18,18), constrained_layout=True)
-    axs = fig.subplots(4,1, sharex=True)
-    
-    # create image grid and temperature contour levels
-    X, Y = np.meshgrid(grid.x, grid.y)
-    temp_levels = [100, 150, 350, 450, 1300]
-
-    # plot the normal strain rate components  as colormap
-    im = axs[0].imshow(mark_epsxx, origin='upper', aspect='auto', extent=[0,4e5,3e5,0], vmin=-1e-14, vmax=2e-14) 
-    fig.colorbar(im, ax=axs[0],pad=0.0)                                                 # display colorbar
-    axs[0].set_title('$\\dot\\epsilon_{xx}$ (1/s)')                                                       # set plot title
-    axs[0].set(ylabel='y (m)', xlim=(75e3, 325e3), ylim=(80e3, 0e3))                      # labels, limits
-    
-    #add temperature contours
-    cs = axs[0].contour(X, Y, grid.T-273, levels=temp_levels, colors='w', linewidths=0.8)
-    axs[0].clabel(cs, inline=True, fontsize=8, fmt='%d C')                     
-    
-    # plot the shear strain rate components
-    im = axs[1].imshow(mark_epsxy, origin='upper', aspect='auto', extent=[0,4e5,3e5,0], vmin=-2e-14, vmax=2e-14)
-    fig.colorbar(im, ax=axs[1],pad=0.0)                                                 # display colorbar
-    axs[1].set_title('$\\dot\\epsilon_{xy}$ (1/s)')                                                          # set plot title
-    axs[1].set(ylabel = 'y (m)', xlim=(75e3, 325e3), ylim=(80e3, 0e3))                   # labels, limits
-    
-    # add temperature contours
-    cs = axs[1].contour(X, Y, grid.T-273, levels=temp_levels, colors='w', linewidths=0.8)
-    axs[1].clabel(cs, inline=True, fontsize=8, fmt='%d C')
-    
-    # plot strain rate
-    im = axs[2].imshow(mark_epsii, origin='upper', aspect='auto', extent=[0,4e5,3e5,0], vmin=0, vmax=2e-14)
-    fig.colorbar(im, ax=axs[2],pad=0.0)                                                 # display colorbar
-    axs[2].set_title('$\\dot \\epsilon_{ii}$ (1/s)')			      # set plot title
-    axs[2].set(ylabel = 'y (m', xlim=(75e3, 325e3), ylim=(80e3, 0e3))                                              # labels, limits
-   
-    # add temperature contours
-    cs = axs[2].contour(X, Y, grid.T-273, levels=temp_levels, colors='w', linewidths=0.8)
-    axs[2].clabel(cs, inline=True, fontsize=8, fmt='%d C')
-
-    # Plot the accumulated strain
-    im = axs[3].imshow(np.log10(mark_gii), origin='upper', aspect='auto', extent=[0,4e5,3e5,0], vmin=-0.5, vmax=0.5)
-    fig.colorbar(im, ax=axs[3],pad=0.0)                                                 # display colorbar
-    axs[3].set_title(' Total strain (log10)')                                              # set plot title
-    axs[3].set(xlabel='x (m)', ylabel = 'y (m)', xlim=(75e3, 325e3), ylim=(80e3, 0e3)) 
-
-    # add temperature contours
-    cs = axs[3].contour(X, Y, grid.T-273, levels=temp_levels, colors='w', linewidths=0.8)
-    axs[3].clabel(cs, inline=True, fontsize=8, fmt='%d C')
-
-    fig.suptitle('Time: %.3f Myr'%(t_curr*1e-6/(365.25*24*3600)))
-    fig.savefig('./Figures/strain_%i.png'%(ntstp))
-
-
 
 @jit(nopython=True)
 def get_marker_fields_vis(xsize, ysize, markers, grid):
@@ -398,13 +325,13 @@ def get_marker_fields_vis(xsize, ysize, markers, grid):
     # define the image resolution - want it to be about 100s in each dimension
     # but proportional to the grid size in each direction
     
-    xres = grid.xnum
-    yres = int(ysize/xsize*xres) + 1 #grid.ynum
+    xres = 401
+    yres = int(ysize/xsize*xres) + 1
     
     # xres = int(xsize/1000) + 1
     # yres = int(ysize/1000) + 1
     
-    ngrid = 1
+    ngrid = 2
     
     sxstp = xsize/(xres - 1)
     systp = ysize/(yres - 1)
@@ -413,12 +340,7 @@ def get_marker_fields_vis(xsize, ysize, markers, grid):
     mark_com = np.ones((yres, xres))*np.nan
     mark_dis = np.ones((yres, xres))*1e20
     mark_gii = np.ones((yres, xres))*np.nan 
-    mark_sigmaxx = np.ones((yres, xres))*np.nan
-    mark_epsxx = np.ones((yres, xres))*np.nan
-    mark_epsxy = np.ones((yres, xres))*np.nan    
-    mark_epsii = np.ones((yres, xres))*np.nan
-    mark_sigmaxy = np.ones((yres, xres))*np.nan
-    mark_sigmaii = np.ones((yres, xres))*np.nan
+    mark_sigmaxx = np.ones((yres, xres))*np.nan    
 
     # loop through markers
     for m in range(0,markers.num):
@@ -468,13 +390,8 @@ def get_marker_fields_vis(xsize, ysize, markers, grid):
                     mark_gii[m20, m10] = markers.gII[m]
                     mark_dis[m20, m10] = dd
                     mark_sigmaxx[m20, m10] = markers.sigmaxx[m]
-                    mark_sigmaxy[m20, m10] = markers.sigmaxy[m]
-                    mark_epsxx[m20, m10] = markers.epsxx[m]
-                    mark_epsxy[m20, m10] = markers.epsxy[m]
-                    mark_epsii[m20, m10] = np.sqrt(markers.epsxy[m]**2+markers.epsxy[m]**2)
-                    mark_sigmaii[m20, m10] = np.sqrt(markers.sigmaxx[m]**2+markers.sigmaxy[m]**2)
 
-    return mark_com, mark_gii, mark_sigmaxx, mark_epsxx, mark_epsxy, mark_epsii, mark_sigmaii, mark_sigmaxy
+    return mark_com, mark_gii, mark_sigmaxx
 
 
 
