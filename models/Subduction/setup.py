@@ -75,30 +75,30 @@ def initialize_markers(markers, materials, params, xsize, ysize):
                 markers.id[mm] = 4
             # Continent
             # Upper continental crust
-            if (markers.x[mm] < 200000 and markers.y[mm] > 7000 and markers.y[mm] < 27000):
+            if (markers.x[mm] < 300000 and markers.y[mm] > 7000 and markers.y[mm] < 27000):
                 markers.id[mm] = 7
-            if (markers.x[mm] >= 200000 and markers.x[mm] < 250000 and  markers.y[mm] > 7000 + (markers.x[mm]-200000)/50000*3000 and markers.y[mm] < 32000 - (markers.x[mm]-200000)/50000*14000):
+            if (markers.x[mm] >= 300000 and markers.x[mm] < 350000 and  markers.y[mm] > 7000 + (markers.x[mm]-300000)/50000*3000 and markers.y[mm] < 32000 - (markers.x[mm]-300000)/50000*14000):
                 markers.id[mm] = 7
             # Used for visualization of the model
-            if (markers.x[mm] < 200000 and markers.y[mm] > 11000 and markers.y[mm] < 15000):
+            if (markers.x[mm] < 300000 and markers.y[mm] > 11000 and markers.y[mm] < 15000):
                 markers.id[mm] = 8
-            if (markers.x[mm] < 200000 and markers.y[mm] > 19000 and markers.y[mm] < 23000):
+            if (markers.x[mm] < 300000 and markers.y[mm] > 19000 and markers.y[mm] < 23000):
                 markers.id[mm] = 8
             # lower cont crust
-            if (markers.x[mm] < 200000 and markers.y[mm] > 27000 and markers.y[mm] < 42000):
+            if (markers.x[mm] < 300000 and markers.y[mm] > 27000 and markers.y[mm] < 42000):
                 markers.id[mm] = 9
-            if (markers.x[mm] < 200000 and markers.y[mm] > 32000 and markers.y[mm] < 37000):
+            if (markers.x[mm] < 300000 and markers.y[mm] > 32000 and markers.y[mm] < 37000):
                 markers.id[mm] = 10
-            if (markers.x[mm] >= 200000 and markers.x[mm] < 250000 and markers.y[mm] > 27000 - (markers.x[mm]-200000)/50000*14000 and markers.y[mm] < 42000 - (markers.x[mm]-200000)/50000*24000):
+            if (markers.x[mm] >= 300000 and markers.x[mm] < 350000 and markers.y[mm] > 27000 - (markers.x[mm]-300000)/50000*14000 and markers.y[mm] < 42000 - (markers.x[mm]-300000)/50000*24000):
                 markers.id[mm] = 9
     	    # Weak zone in the mantle
-            if (markers.y[mm] > 28000 and markers.y[mm] < 90000 and markers.x[mm] > 240000 - (markers.y[mm]-18000)/24000*50000 and markers.x[mm] < 260000 - (markers.y[mm]-18000)/24000*50000):
+            if (markers.y[mm] > 28000 and markers.y[mm] < 90000 and markers.x[mm] > 340000 - (markers.y[mm]-18000)/24000*50000 and markers.x[mm] < 360000 - (markers.y[mm]-18000)/24000*50000):
                 markers.id[mm] = 6            
 	         # Weak zone in the oceanic crust
-            if (markers.y[mm] > 20000 and markers.y[mm] <= 18000 and markers.x[mm] > 240000 - (markers.y[mm]-18000)/24000*50000 and markers.x[mm] < 260000 - (markers.y[mm]-18000)/24000*155000):
+            if (markers.y[mm] > 20000 and markers.y[mm] <= 18000 and markers.x[mm] > 340000 - (markers.y[mm]-18000)/24000*50000 and markers.x[mm] < 360000 - (markers.y[mm]-18000)/24000*155000):
                 markers.id[mm] = 2
 	        # Asthenosphere below the oceanic plate
-            if (markers.y[mm] > 70000 and markers.y[mm] <= 100000 and markers.x[mm] > 410000 - (markers.y[mm]-8000)/24000*75000):
+            if (markers.y[mm] > 70000 and markers.y[mm] <= 100000 and markers.x[mm] > 510000 - (markers.y[mm]-8000)/24000*75000):
                 markers.id[mm] = 5
 
             # initial temperature structure
@@ -118,25 +118,25 @@ def initialize_markers(markers, materials, params, xsize, ysize):
             kappa = 1e-6		     # Thermal diffusivity of the mantle, m^2/s
     
 	        # After Turcotte & Schubert (2002) 
-            if (markers.x[mm] > 250000 and markers.y[mm] > 10000 and markers.y[mm] < y_asth):  # markers.y was creater than 10000
+            if (markers.x[mm] > 350000 and markers.y[mm] > 10000 and markers.y[mm] < y_asth):  # markers.y was creater than 10000
                 # T difference at the bottom of the oceanic plate
                 dt = -(params.T_top - T_asth)*(1-math.erf((y_asth-10000)/2/(kappa*age)**0.5))
                 markers.T[mm] = T_asth+dt+(params.T_top-T_asth-dt)*(1-math.erf((markers.y[mm]-10000)/2/(kappa*age)**0.5))
 
             # linear continental geotherm
-            if (markers.x[mm] <= 200000 and markers.y[mm] > 7000 and markers.y[mm]<y_asth):
+            if (markers.x[mm] <= 300000 and markers.y[mm] > 7000 and markers.y[mm]<y_asth):
                 markers.T[mm] = params.T_top + (T_asth - params.T_top)*(markers.y[mm] - 7000)/(y_asth - 7000)
             
 	        # Transient left continent --> ocean geotherm
-            if (markers.x[mm] > 200000 and markers.x[mm] < 250000 and markers.y[mm] > 7000 + (markers.x[mm]-200000)/50000*3000 and markers.y[mm] < y_asth):
+            if (markers.x[mm] > 300000 and markers.x[mm] < 350000 and markers.y[mm] > 7000 + (markers.x[mm]-300000)/50000*3000 and markers.y[mm] < y_asth):
 		        # Continental geotherm
-                T_cont = params.T_top + (T_asth-params.T_top)*(markers.y[mm]-(7000+(markers.x[mm]-200000)/50000*3000))/(y_asth-7000)
+                T_cont = params.T_top + (T_asth-params.T_top)*(markers.y[mm]-(7000+(markers.x[mm]-300000)/50000*3000))/(y_asth-7000)
 		        # T difference at the bottom of the oceanic and continental plates
                 dt = -(params.T_top - T_asth)*(1-math.erf((y_asth-10000)/2/(kappa*age)**0.5))
 		        # Oceanic geotherm
-                T_ocea = T_asth+dt+(params.T_top-T_asth-dt)*(1-math.erf((markers.y[mm]-(7000+(markers.x[mm]-200000)/50000*3000))/2/(kappa*age)**0.5))
+                T_ocea = T_asth+dt+(params.T_top-T_asth-dt)*(1-math.erf((markers.y[mm]-(7000+(markers.x[mm]-300000)/50000*3000))/2/(kappa*age)**0.5))
 		        # Linear lateral transition
-                mwt = (markers.x[mm]-200000)/50000
+                mwt = (markers.x[mm]-300000)/50000
 		        # Transitional temperate
                 markers.T[mm] = T_cont*(1-mwt) + T_ocea*mwt
 
@@ -213,15 +213,15 @@ def initializeModel():
 
     # additional model options 
     # initial system size
-    xsize0 = 760000      #600000    
-    ysize0 = 200000
+    xsize0 = 880000
+    ysize0 = 320000
     
     xsize = xsize0
     ysize = ysize0
 
     # set resolution
-    xnum = 104+4
-    ynum = 35
+    xnum = 104+7
+    ynum = 35+3
 
 
     # instantiate/load material properties object
@@ -256,10 +256,10 @@ def initializeModel():
 
     # optional internal boundary, switched off
     B_intern = np.zeros(8)
-    B_intern[0] = 99  
+    B_intern[0] = 102
     B_intern[1] = 20
     B_intern[2] = 23
-    B_intern[3] = (-7.5*1e-2)/(365.25*24*3600)  # convert to m/s
+    B_intern[3] = (-5*1e-2)/(365.25*24*3600)  # convert to m/s 7.5
     B_intern[4] = -1 
     B_intern[5] = 0
     B_intern[6] = 0
@@ -288,8 +288,8 @@ def initializeModel():
 
     ############################################################################
     # create markers object
-    mnumx = 600
-    mnumy = 200
+    mnumx = 550
+    mnumy = 510
     markers = Markers(mnumx, mnumy)
 
     # initialize markers
@@ -343,6 +343,8 @@ def gridSpacings(params, xsize, ysize, grid, t_curr):
     non_uni_xsize = params.non_uni_xsize
     N_end = params.N_end
     b_end = params.b_end
+    Ny_end = params.Ny_end
+    by_end = params.by_end
     
     ###############################################################################
     # Horizontal grid
@@ -402,31 +404,40 @@ def gridSpacings(params, xsize, ysize, grid, t_curr):
         for i in range(1,Nx):
             grid.x[i] = grid.x[i-1] + bx*F**(Nx+1-i)
         
-    
     ###########################################################################
     # Vertical grid
     # one-sided, there is high resolution at the top of the grid and then a decreasing region below
 
+    # ysize - region of fixed grid at the end
+    ysize_norm = ysize - Ny_end*by_end
+
+    # grid point number at which the non-uniform grid ends
+    ynum_ad = ynum - Ny_end
+
     # set the high resolution area, assumes y[0] = 0
-    for i in range(1,ynum-Ny):
+    for i in range(1,ynum_ad-Ny):
         grid.y[i] = grid.y[i-1] + by
       
     
     if (Ny > 0):
         # size of the non-uniform regions
-        D = ysize - grid.y[ynum-Ny-1]
+        D = ysize_norm - grid.y[ynum_ad-Ny-1]
        
         # solve iteratively for scaling factor
         F = 1.1
         for i in range(0,100):
             F = (1 + D/by*(1 - 1/F))**(1/Ny)
             # set the grid points below the high-res region
-        for i in range(ynum-Ny, ynum):
-            grid.y[i] = grid.y[i-1] + by*F**(i-(ynum-Ny-1))
-           
+        for i in range(ynum_ad-Ny, ynum_ad):
+            grid.y[i] = grid.y[i-1] + by*F**(i-(ynum_ad-Ny-1))
+        #we have a set of fixed resolution points between 200e3 and 400e3 m
+        for i in range(ynum_ad, ynum):
+            grid.y[i] = grid.y[i-1] + by_end
+
         # fix the end position if this is the first step
         if (t_curr==0):
             grid.y[ynum-1] = ysize
+            grid.y[ynum_ad-1] = ysize_norm
 
     # need a return statement, since we conditionally return early if the grid is constant
     return 1
@@ -464,6 +475,8 @@ spec_par = [
     ('const', int64),
     ('N_end', int64),
     ('b_end', float64),
+    ('Ny_end', int64),
+    ('by_end', float64),
     ('save_output', int64),
     ('save_fig', int64),
 ]
@@ -582,8 +595,8 @@ class Parameters():
         self.max_pow_law = 150                  # maximum power law exponent in visc model
         
         # timestepping
-        self.t_end = 3e6*(365.24*24*3600)       # end time, simulation will exit if this is reached before max number of timesteps elapsed
-        self.ntstp_max =  680                   # maximum number of timesteps 
+        self.t_end = 5e6*(365.24*24*3600)       # end time, simulation will exit if this is reached before max number of timesteps elapsed
+        self.ntstp_max = 680                    # maximum number of timesteps 
         self.Temp_stp_max = 20                  # maximum number of temperature substeps
         
         self.tstp_max = 1e4*365.25*24*3600      # maximum timestep
@@ -610,9 +623,12 @@ class Parameters():
         self.non_uni_xsize = 175000             # physical x-size of non-uniform grid region left of the high res zone
         self.const = 1                          # flag which determines whether grid remains constant or not
         
-        self.N_end = 4                          # number of additional uniform grid points at the upper edge of grid in x-direction
+        self.N_end = 7                          # number of additional uniform grid points at the upper edge of grid in x-direction
         self.b_end = 40e3                       # grid spacing in uniform region at upper edge
-        
+        self.Ny_end = 3                         # number of additional uniform grid points at the bottom of the grid in y-direction
+        self.by_end = 40e3                      # grid spacing in uniform region at upper edge       
+
+ 
         # output options
         self.save_output = 50                    # number of steps between output files
         self.save_fig = 12                       # number of steps between figure output    

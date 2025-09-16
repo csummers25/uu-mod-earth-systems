@@ -81,7 +81,7 @@ def plotAVar(grid, vxb, vyb, L_x, L_y, ntstp, t_curr):
     im = axs.pcolor(X, Y, grid.T-273, shading='nearest', vmin=0, vmax=1400)
     fig.colorbar(im, ax=axs,pad=0.0)                                        # display colorbar
     axs.set_title('Temperature (C)')                                        # set plot title
-    axs.set(ylabel='y (km)', xlabel='x (km)')                               # label the y-axis and x-axis
+    axs.set(ylabel='y (m)', xlabel='x (m)', xlim=(0e3, 550e3), ylim=(0, 300e3))                               # label the y-axis and x-axis
     axs.invert_yaxis()                                                      # plot increasing depth downward! 
 
     fig.suptitle('Time: %.3f Myr'%(t_curr*1e-6/(365.25*24*3600)))
@@ -134,7 +134,7 @@ def plotSeveralVars(grid, vxb, vyb, L_x, L_y, ntstp, t_curr):
     im = axs[0].pcolor(X, Y, grid.rho, shading='nearest', vmin=2200, vmax=3500)
     fig.colorbar(im, ax=axs[0],pad=0.0)        # display colorbar
     axs[0].set_title('Density (kg/m3) ')       # set plot title
-    axs[0].set(ylabel='y (m)')                 # label the y-axis (shared axis for x)
+    axs[0].set(ylabel='y (m)', xlim=(0e3, 550e3), ylim=(300e3, 0))                 # label the y-axis (shared axis for x)
     
     # add velocity arrows, not at every cell, step sets the spacing
     step = 5
@@ -150,7 +150,7 @@ def plotSeveralVars(grid, vxb, vyb, L_x, L_y, ntstp, t_curr):
     # Viscosity
     im = axs[1].pcolor(X, Y, np.log10(grid.eta_n),vmin=18, vmax=28)
     fig.colorbar(im, ax=axs[1],pad=0.0)                 # display colorbar
-    axs[1].set(ylabel='y (m)')                          # label the y-axis (shared axis for x)
+    axs[1].set(ylabel='y (m)', xlim=(0e3, 550e3), ylim=(300e3, 0))                          # label the y-axis (shared axis for x)
     axs[1].set_title('Viscosity log10(Pa s)')           # set plot title
     
     # Add temperature contours
@@ -160,7 +160,7 @@ def plotSeveralVars(grid, vxb, vyb, L_x, L_y, ntstp, t_curr):
 	# Pressure
     im = axs[2].pcolor(X, Y, grid.P, shading='flat',vmin=0.1e9,vmax=9e9)
     fig.colorbar(im, ax=axs[2],pad=0.0)                 # display colorbar
-    axs[2].set(ylabel='y (m)', xlabel='x (m)')          # label the x and y-axis
+    axs[2].set(ylabel='y (m)', xlabel='x (m)', xlim=(0e3, 550e3), ylim=(300e3, 0))          # label the x and y-axis
     axs[2].set_title('Pressure (Pa)')                   # set plot title
     
     # Add temperature contours
@@ -211,7 +211,7 @@ def plotMarkerFields_Lithology(xsize, ysize, markers, grid, ntstp, t_curr):
     im = axs.imshow(mark_com, origin='upper', aspect='auto', extent=[0,xsize,ysize,0])
     fig.colorbar(im, ax=axs,pad=0.0)                                                 # display colorbar
     axs.set_title('Lithology')                                                       # set plot title
-    axs.set(ylabel='y (m)', xlabel ='x (m)', xlim=(0e3, 600e3), ylim(200e3, 0))                                         # labels, limits                        
+    axs.set(ylabel='y (m)', xlabel ='x (m)', xlim=(0e3, 550e3), ylim=(300e3, 0))                                         # labels, limits                        
     
     fig.suptitle('Time: %.3f Myr'%(t_curr*1e-6/(365.25*24*3600)))
     fig.savefig('./Figures/litho_%i.png'%(ntstp))
@@ -256,17 +256,17 @@ def plotMarkerFields(xsize, ysize, markers, grid, ntstp, t_curr):
     im = axs[0].imshow(mark_sigmaii, origin='upper', aspect='auto', extent=[0, xsize, ysize, 0])             
     fig.colorbar(im, ax=axs[0],pad=0.0)                                                 # display colorbar
     axs[0].set_title('$\\sigma_{ii}$ (Pa)')                                                       # set plot title
-    axs[0].set(ylabel='y (m)', xlim=(0e3, 600e3), ylim(200e3, 0))                      # labels, limits
+    axs[0].set(ylabel='y (m)', xlim=(0e3, 550e3), ylim=(300e3, 0))                      # labels, limits
     
     # add temperature contours
-    cs = axs[0].contour(X, Y, grid.T-273, levels=temp_levels, colors='w', linewidths=0.8
+    cs = axs[0].contour(X, Y, grid.T-273, levels=temp_levels, colors='w', linewidths=0.8)
     axs[0].clabel(cs, inline=True, fontsize=8, fmt='%d C')                     
     
     # plot normal stress components
     im = axs[1].imshow(mark_sigmaxx, origin='upper', aspect='auto', extent=[0, xsize, ysize, 0])                     # extent=[0,xsize,ysize,0]
     fig.colorbar(im, ax=axs[1],pad=0.0)                                                 # display colorbar
     axs[1].set_title('$\\sigma_{xx}$ (Pa)')                                                          # set plot title
-    axs[1].set(ylabel = 'y (m)', xlim=(0e3, 600e3), ylim(200e3, 0))                   # labels, limits
+    axs[1].set(ylabel = 'y (m)', xlim=(0e3, 550e3), ylim=(300e3, 0))                   # labels, limits
     
     # add temperature contours
     cs = axs[1].contour(X, Y, grid.T-273, levels=temp_levels, colors='w', linewidths=0.8)
@@ -276,7 +276,7 @@ def plotMarkerFields(xsize, ysize, markers, grid, ntstp, t_curr):
     im = axs[2].imshow(mark_sigmaxy, origin='upper', aspect='auto', extent=[0, xsize, ysize, 0])                     # extent=[0,xsize,ysize,0]
     fig.colorbar(im, ax=axs[2],pad=0.0)                                                 # display colorbar
     axs[2].set_title('$\\sigma_{xy}$ (Pa)')                                              # set plot title
-    axs[2].set(xlabel='x (m)', ylabel = 'y (m)', xlim=(0e3, 600e3), ylim(200e3, 0))   # labels, limits
+    axs[2].set(xlabel='x (m)', ylabel = 'y (m)', xlim=(0e3, 550e3), ylim=(300e3, 0))   # labels, limits
     
     # add temperature contours
     cs = axs[2].contour(X, Y, grid.T-273, levels=temp_levels, colors='w', linewidths=0.8)
@@ -324,7 +324,7 @@ def plotMarkerFields2(xsize, ysize, markers, grid, ntstp, t_curr):
     im = axs[0].imshow(mark_epsxx, origin='upper', aspect='auto', extent=[0,xsize,ysize,0], vmin=-4e-14, vmax=4e-14)
     fig.colorbar(im, ax=axs[0],pad=0.0)                                                 # display colorbar
     axs[0].set_title('$\\dot\\epsilon_{xx}$ (1/s)')                                                       # set plot title
-    axs[0].set(ylabel='y (m)', xlim=(0e3, 600e3), ylim(200e3, 0))                      # labels, limits
+    axs[0].set(ylabel='y (m)', xlim=(0e3, 550e3), ylim=(300e3, 0))                      # labels, limits
     
     #add temperature contours
     cs = axs[0].contour(X, Y, grid.T-273, levels=temp_levels, colors='w', linewidths=0.8)
@@ -334,7 +334,7 @@ def plotMarkerFields2(xsize, ysize, markers, grid, ntstp, t_curr):
     im = axs[1].imshow(mark_epsxy, origin='upper', aspect='auto', extent=[0,xsize,ysize,0], vmin=-4e-14, vmax=4e-14)
     fig.colorbar(im, ax=axs[1],pad=0.0)                                                 # display colorbar
     axs[1].set_title('$\\dot\\epsilon_{xy}$ (1/s)')                                                          # set plot title
-    axs[1].set(ylabel = 'y (m)', xlim=(0e3, 600e3), ylim(200e3, 0))                   # labels, limits
+    axs[1].set(ylabel = 'y (m)', xlim=(0e3, 550e3), ylim=(300e3, 0))                   # labels, limits
     
     # add temperature contours
     cs = axs[1].contour(X, Y, grid.T-273, levels=temp_levels, colors='w', linewidths=0.8)
@@ -344,7 +344,7 @@ def plotMarkerFields2(xsize, ysize, markers, grid, ntstp, t_curr):
     im = axs[2].imshow(mark_epsii, origin='upper', aspect='auto', extent=[0,xsize,ysize,0], vmin=-4e-14, vmax=4e-14)
     fig.colorbar(im, ax=axs[2],pad=0.0)                                                 # display colorbar
     axs[2].set_title('$\\dot \\epsilon_{ii}$ (1/s)')					# set plot title
-    axs[2].set(ylabel='y (m)', xlim=(0e3, 600e3), ylim(200e3, 0))                         # labels, limits
+    axs[2].set(ylabel='y (m)', xlim=(0e3, 550e3), ylim=(300e3, 0))                         # labels, limits
    
     # add temperature contours
     cs = axs[2].contour(X, Y, grid.T-273, levels=temp_levels, colors='w', linewidths=0.8)
@@ -354,7 +354,7 @@ def plotMarkerFields2(xsize, ysize, markers, grid, ntstp, t_curr):
     im = axs[3].imshow(np.log10(mark_gii), origin='upper', aspect='auto', extent=[0,xsize,ysize,0], vmin=-2, vmax=2)
     fig.colorbar(im, ax=axs[3],pad=0.0)                                                 # display colorbar
     axs[3].set_title('Total strain (log10)')                                              # set plot title
-    axs[3].set(xlabel='x (m)', ylabel = 'y (m)', xlim=(0e3, 600e3), ylim(200e3, 0)) 
+    axs[3].set(xlabel='x (m)', ylabel = 'y (m)', xlim=(0e3, 500e3), ylim=(300e3, 0)) 
 
     # add temperature contours
     cs = axs[3].contour(X, Y, grid.T-273, levels=temp_levels, colors='w', linewidths=0.8)
