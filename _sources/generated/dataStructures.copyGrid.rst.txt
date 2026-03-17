@@ -1,0 +1,6 @@
+dataStructures.copyGrid
+=======================
+
+.. currentmodule:: dataStructures
+
+.. autofunction:: copyGrid

@@ -1,0 +1,6 @@
+physics.markerUtils.getMarkerNodeDistances
+==========================================
+
+.. currentmodule:: physics.markerUtils
+
+.. autofunction:: getMarkerNodeDistances

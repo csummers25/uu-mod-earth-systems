@@ -1,0 +1,17 @@
+﻿visualisation
+=============
+
+.. automodule:: visualisation
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+   
+      basicGridVelocities
+      get_marker_fields_vis
+      plotAVar
+      plotMarkerFields
+      plotSeveralVars
+   

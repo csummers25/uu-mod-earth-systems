@@ -1,0 +1,23 @@
+﻿models.lithosphereExtension.setup
+=================================
+
+.. automodule:: models.lithosphereExtension.setup
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+   
+      gridSpacings
+      initializeModel
+      initialize_markers
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+      :template: custom_class.rst
+   
+      Parameters
+   

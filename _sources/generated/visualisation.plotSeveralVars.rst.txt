@@ -1,0 +1,6 @@
+visualisation.plotSeveralVars
+=============================
+
+.. currentmodule:: visualisation
+
+.. autofunction:: plotSeveralVars

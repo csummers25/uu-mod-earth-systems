@@ -1,0 +1,6 @@
+physics.markers\_fns.markerViscosity
+====================================
+
+.. currentmodule:: physics.markers_fns
+
+.. autofunction:: markerViscosity

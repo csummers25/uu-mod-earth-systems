@@ -1,0 +1,6 @@
+visualisation.basicGridVelocities
+=================================
+
+.. currentmodule:: visualisation
+
+.. autofunction:: basicGridVelocities

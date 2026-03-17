@@ -1,0 +1,6 @@
+physics.StokesContinuitySolver.StokesConstructMatrix
+====================================================
+
+.. currentmodule:: physics.StokesContinuitySolver
+
+.. autofunction:: StokesConstructMatrix

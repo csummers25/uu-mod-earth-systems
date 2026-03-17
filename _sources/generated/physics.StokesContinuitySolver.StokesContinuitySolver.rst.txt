@@ -1,0 +1,6 @@
+physics.StokesContinuitySolver.StokesContinuitySolver
+=====================================================
+
+.. currentmodule:: physics.StokesContinuitySolver
+
+.. autofunction:: StokesContinuitySolver

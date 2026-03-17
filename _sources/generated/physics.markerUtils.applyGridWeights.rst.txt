@@ -1,0 +1,6 @@
+physics.markerUtils.applyGridWeights
+====================================
+
+.. currentmodule:: physics.markerUtils
+
+.. autofunction:: applyGridWeights
