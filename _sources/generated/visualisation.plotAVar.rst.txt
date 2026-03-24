@@ -1,0 +1,6 @@
+visualisation.plotAVar
+======================
+
+.. currentmodule:: visualisation
+
+.. autofunction:: plotAVar

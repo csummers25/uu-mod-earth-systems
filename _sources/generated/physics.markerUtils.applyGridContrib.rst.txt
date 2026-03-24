@@ -1,0 +1,6 @@
+physics.markerUtils.applyGridContrib
+====================================
+
+.. currentmodule:: physics.markerUtils
+
+.. autofunction:: applyGridContrib

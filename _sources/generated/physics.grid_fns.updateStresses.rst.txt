@@ -1,0 +1,6 @@
+physics.grid\_fns.updateStresses
+================================
+
+.. currentmodule:: physics.grid_fns
+
+.. autofunction:: updateStresses

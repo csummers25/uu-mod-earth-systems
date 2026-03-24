@@ -1,0 +1,6 @@
+physics.StokesContinuitySolver.constructStokesRHS
+=================================================
+
+.. currentmodule:: physics.StokesContinuitySolver
+
+.. autofunction:: constructStokesRHS

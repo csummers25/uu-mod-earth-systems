@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>physics.TemperatureSolver.TemperatureSolver &#8212; Modelling Earth Systems 0.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=27fed22d" />
+    <script src="../_static/documentation_options.js?v=2709fde1"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="physics.TemperatureSolver.calculateResiduals" href="physics.TemperatureSolver.calculateResiduals.html" />
+    <link rel="prev" title="physics.TemperatureSolver.TemperatureConstructMatrix" href="physics.TemperatureSolver.TemperatureConstructMatrix.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="physics-temperaturesolver-temperaturesolver">
+<h1>physics.TemperatureSolver.TemperatureSolver<a class="headerlink" href="#physics-temperaturesolver-temperaturesolver" title="Link to this heading">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="physics.TemperatureSolver.TemperatureSolver">
+<span class="sig-prename descclassname"><span class="pre">physics.TemperatureSolver.</span></span><span class="sig-name descname"><span class="pre">TemperatureSolver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tstep</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xnum</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ynum</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gridx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gridy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rho_Cp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B_top</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B_bottom</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B_left</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B_right</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R_heat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T_k</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#physics.TemperatureSolver.TemperatureSolver" title="Link to this definition">¶</a></dt>
+<dd><p>Formulates and solves the heat conservation eqn on a 2D, irregularly spaced grid
+using scipy sparse matricies and solver.</p>
+<section id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
+<dl class="simple">
+<dt>tstep<span class="classifier">FLOAT</span></dt><dd><p>Current timestep.</p>
+</dd>
+<dt>xnum<span class="classifier">INT</span></dt><dd><p>Number of nodes in x-direction.</p>
+</dd>
+<dt>ynum<span class="classifier">INT</span></dt><dd><p>Number of nodes in y-direction.</p>
+</dd>
+<dt>gridx<span class="classifier">ARRAY</span></dt><dd><p>The x positions of the T nodes.</p>
+</dd>
+<dt>gridy<span class="classifier">ARRAY</span></dt><dd><p>The y positions of the T nodes.</p>
+</dd>
+<dt>kt<span class="classifier">ARRAY</span></dt><dd><p>Thermal conductivity at the T nodes.</p>
+</dd>
+<dt>rho_Cp<span class="classifier">ARRAY</span></dt><dd><p>Density * C_P at the T nodes.</p>
+</dd>
+<dt>B_top<span class="classifier">ARRAY</span></dt><dd><p>Top temperature BCs.  Array has 2 columns, values in each are defined as:
+T[i,j] = BT_top[0] + BT_top[1]*T[i+1,j]</p>
+</dd>
+<dt>B_bottom<span class="classifier">ARRAY</span></dt><dd><p>Array specifying the boundary T for the bottom (y=L_y) of the domain.</p>
+</dd>
+<dt>B_left<span class="classifier">ARRAY</span></dt><dd><p>Array specifying the boundary T for the left (x=0) of the domain.</p>
+</dd>
+<dt>B_right<span class="classifier">ARRAY</span></dt><dd><p>Array specifying the boundary T for the right (x=L_x) of the domain.</p>
+</dd>
+<dt>R_heat<span class="classifier">ARRAY</span></dt><dd><p>Heating term at the T nodes.</p>
+</dd>
+<dt>T_k<span class="classifier">ARRAY</span></dt><dd><p>Temperature (at the T nodes) from previous timestep.</p>
+</dd>
+</dl>
+</section>
+<section id="returns">
+<h2>Returns<a class="headerlink" href="#returns" title="Link to this heading">¶</a></h2>
+<dl class="simple">
+<dt>T_k_new<span class="classifier">ARRAY</span></dt><dd><p>2D array containing the new temperatures.</p>
+</dd>
+<dt>T_res<span class="classifier">ARRAY</span></dt><dd><p>Calculated residuals.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Modelling Earth Systems</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../setup.html">Setting up a model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../run.html">Running your model</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="dataStructures.html">dataStructures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="physics.markers_fns.html">physics.markers_fns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="physics.grid_fns.html">physics.grid_fns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="physics.markerUtils.html">physics.markerUtils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="physics.StokesContinuitySolver.html">physics.StokesContinuitySolver</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="physics.TemperatureSolver.html">physics.TemperatureSolver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="visualisation.html">visualisation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="models.lithosphereExtension.setup.html">models.lithosphereExtension.setup</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../api.html">API</a><ul>
+  <li><a href="physics.TemperatureSolver.html">physics.TemperatureSolver</a><ul>
+      <li>Previous: <a href="physics.TemperatureSolver.TemperatureConstructMatrix.html" title="previous chapter">physics.TemperatureSolver.TemperatureConstructMatrix</a></li>
+      <li>Next: <a href="physics.TemperatureSolver.calculateResiduals.html" title="next chapter">physics.TemperatureSolver.calculateResiduals</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Charlotte Summers.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../_sources/generated/physics.TemperatureSolver.TemperatureSolver.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

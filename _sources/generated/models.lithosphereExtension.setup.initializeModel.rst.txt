@@ -1,0 +1,6 @@
+models.lithosphereExtension.setup.initializeModel
+=================================================
+
+.. currentmodule:: models.lithosphereExtension.setup
+
+.. autofunction:: initializeModel

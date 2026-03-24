@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>physics.markers_fns &#8212; Modelling Earth Systems 0.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=27fed22d" />
+    <script src="../_static/documentation_options.js?v=2709fde1"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="physics.markers_fns.advectMarkers" href="physics.markers_fns.advectMarkers.html" />
+    <link rel="prev" title="dataStructures.Materials" href="dataStructures.Materials.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="module-physics.markers_fns">
+<span id="physics-markers-fns"></span><h1>physics.markers_fns<a class="headerlink" href="#module-physics.markers_fns" title="Link to this heading">¶</a></h1>
+<p>Functions that relate to marker physics,
+including interpolation of quantities to/from the grid,
+marker viscosity calculation, subgrid stress/diffusion</p>
+<p>Lower level functions for marker operations, including getting nearest node 
+distances, interpolating a value to/from markers, etc. are in markerUtils.</p>
+<p class="rubric">Functions</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="physics.markers_fns.advectMarkers.html#physics.markers_fns.advectMarkers" title="physics.markers_fns.advectMarkers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">advectMarkers</span></code></a>(markers, grid, xnum, ynum, ...)</p></td>
+<td><p>Displaces the markers using the calculated grid velocities for the current timestep.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="physics.markers_fns.gridToMarker.html#physics.markers_fns.gridToMarker" title="physics.markers_fns.gridToMarker"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gridToMarker</span></code></a>(fields, markers_fs, markersx, ...)</p></td>
+<td><p>Interpolates grid values to markers for a specified list of variables</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="physics.markers_fns.markerViscosity.html#physics.markers_fns.markerViscosity" title="physics.markers_fns.markerViscosity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">markerViscosity</span></code></a>(markers, materials, m, grid, ...)</p></td>
+<td><p>Calculates the viscosity of a marker based on its material type.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="physics.markers_fns.markersToGrid.html#physics.markers_fns.markersToGrid" title="physics.markers_fns.markersToGrid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">markersToGrid</span></code></a>(markers, materials, grid, ...)</p></td>
+<td><p>Reads or calculates the marker values for density, thermal quantities, viscosity, stresses, mu and interpolates them to the grid.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="physics.markers_fns.subgridDiffusion.html#physics.markers_fns.subgridDiffusion" title="physics.markers_fns.subgridDiffusion"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subgridDiffusion</span></code></a>(grid, markers, params, ...)</p></td>
+<td><p>Calculates the subgrid diffusion temperature changes for all grid nodes.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="physics.markers_fns.subgridStressChanges.html#physics.markers_fns.subgridStressChanges" title="physics.markers_fns.subgridStressChanges"><code class="xref py py-obj docutils literal notranslate"><span class="pre">subgridStressChanges</span></code></a>(markers, grid, xnum, ...)</p></td>
+<td><p>Calculates the subgrid stress changes, stored in grid.dsigxx, grid.dsigxy</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="physics.markers_fns.updateMarkerErat.html#physics.markers_fns.updateMarkerErat" title="physics.markers_fns.updateMarkerErat"><code class="xref py py-obj docutils literal notranslate"><span class="pre">updateMarkerErat</span></code></a>(markers, materials, grid, ...)</p></td>
+<td><p>Updates the marker eii/eii_grid ratio values</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Modelling Earth Systems</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../setup.html">Setting up a model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../run.html">Running your model</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="dataStructures.html">dataStructures</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">physics.markers_fns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="physics.grid_fns.html">physics.grid_fns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="physics.markerUtils.html">physics.markerUtils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="physics.StokesContinuitySolver.html">physics.StokesContinuitySolver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="physics.TemperatureSolver.html">physics.TemperatureSolver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="visualisation.html">visualisation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="models.lithosphereExtension.setup.html">models.lithosphereExtension.setup</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../api.html">API</a><ul>
+      <li>Previous: <a href="dataStructures.Materials.html" title="previous chapter">dataStructures.Materials</a></li>
+      <li>Next: <a href="physics.markers_fns.advectMarkers.html" title="next chapter">physics.markers_fns.advectMarkers</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Charlotte Summers.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../_sources/generated/physics.markers_fns.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,6 @@
+models.lithosphereExtension.setup.gridSpacings
+==============================================
+
+.. currentmodule:: models.lithosphereExtension.setup
+
+.. autofunction:: gridSpacings

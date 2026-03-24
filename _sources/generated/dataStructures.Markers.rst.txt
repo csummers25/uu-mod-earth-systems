@@ -1,0 +1,31 @@
+dataStructures.Markers
+======================
+
+.. currentmodule:: dataStructures
+
+.. autoclass:: Markers
+   :members:
+   :show-inheritance:
+   :inherited-members:
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~Markers.__init__
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Markers.class_type
+   
+   

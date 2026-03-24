@@ -1,0 +1,15 @@
+﻿physics.grid\_fns
+=================
+
+.. automodule:: physics.grid_fns
+
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+   
+      strainRateComps
+      updateStresses
+      viscElastStress
+   

@@ -1,0 +1,6 @@
+physics.TemperatureSolver.S\_to\_grid
+=====================================
+
+.. currentmodule:: physics.TemperatureSolver
+
+.. autofunction:: S_to_grid

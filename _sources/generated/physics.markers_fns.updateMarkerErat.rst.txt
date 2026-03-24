@@ -1,0 +1,6 @@
+physics.markers\_fns.updateMarkerErat
+=====================================
+
+.. currentmodule:: physics.markers_fns
+
+.. autofunction:: updateMarkerErat

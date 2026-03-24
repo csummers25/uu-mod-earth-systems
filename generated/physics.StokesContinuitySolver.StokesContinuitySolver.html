@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>physics.StokesContinuitySolver.StokesContinuitySolver &#8212; Modelling Earth Systems 0.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=27fed22d" />
+    <script src="../_static/documentation_options.js?v=2709fde1"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="physics.StokesContinuitySolver.calculateResiduals" href="physics.StokesContinuitySolver.calculateResiduals.html" />
+    <link rel="prev" title="physics.StokesContinuitySolver.StokesConstructMatrix" href="physics.StokesContinuitySolver.StokesConstructMatrix.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="physics-stokescontinuitysolver-stokescontinuitysolver">
+<h1>physics.StokesContinuitySolver.StokesContinuitySolver<a class="headerlink" href="#physics-stokescontinuitysolver-stokescontinuitysolver" title="Link to this heading">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="physics.StokesContinuitySolver.StokesContinuitySolver">
+<span class="sig-prename descclassname"><span class="pre">physics.StokesContinuitySolver.</span></span><span class="sig-name descname"><span class="pre">StokesContinuitySolver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">P_first</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eta_s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eta_n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xnum</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ynum</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gridx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gridy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R_x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R_y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R_C</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B_top</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B_bottom</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B_left</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B_right</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B_intern</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#physics.StokesContinuitySolver.StokesContinuitySolver" title="Link to this definition">¶</a></dt>
+<dd><p>This function formulates and solves  
+Stokes and Continuity equations defined on 2D staggered irregularly spaced grid
+with specified resolution (xnum, ynum) and grid lines positions (gridx, gridy)
+given distribution of right parts for all equations (RX,RY,RC) on the grid 
+and given variable shear (etas) and normal (etan) viscosity distributions 
+pressure is normalized relative to given value (prnorm) in the first cell</p>
+<section id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
+<dl class="simple">
+<dt>P_first<span class="classifier">ARRAY</span></dt><dd><p>2 element array that defines pressure BCs. 
+P_first[0] sets the type of pressure BC (0=defined by one cell, 1=top and bottom).
+P_first[1] is the boundary value</p>
+</dd>
+<dt>eta_s<span class="classifier">ARRAY</span></dt><dd><p>The shear stress viscosity values.</p>
+</dd>
+<dt>eta_n<span class="classifier">ARRAY</span></dt><dd><p>The normal stress viscosity values.</p>
+</dd>
+<dt>xnum<span class="classifier">INT</span></dt><dd><p>Number of normal nodes in x-direction.</p>
+</dd>
+<dt>ynum<span class="classifier">INT</span></dt><dd><p>Number of normal nodes in y-direction.</p>
+</dd>
+<dt>gridx<span class="classifier">ARRAY</span></dt><dd><p>x-coordinates of normal grid nodes.</p>
+</dd>
+<dt>gridy<span class="classifier">ARRAY</span></dt><dd><p>y-coordinates of normal grid nodes.</p>
+</dd>
+<dt>R_x<span class="classifier">ARRAY</span></dt><dd><p>RHS values of the x-component momentum equation.</p>
+</dd>
+<dt>R_y<span class="classifier">ARRAY</span></dt><dd><p>RHS values of the y-component momentum equation</p>
+</dd>
+<dt>R_C<span class="classifier">ARRAY</span></dt><dd><p>RHS values of the continuity equation</p>
+</dd>
+<dt>B_top<span class="classifier">ARRAY</span></dt><dd><p>Boundary conditions at the top of the grid. Array has 4 columns, 
+values in each are defined as: 
+vx[0,j] = B_top[j,0] + vx[1,j]*B_top[j,1]
+vy[0,j] = B_top[j,2] + vy[1,j]*B_top[j,3]</p>
+</dd>
+<dt>B_bottom<span class="classifier">ARRAY</span></dt><dd><p>Boundary conditions at the bottom of the grid. Array has 4 columns, 
+values in each are defined as: 
+vx[0,j] = B_bot[j,0] + vx[1,j]*B_bot[j,1]
+vy[0,j] = B_bot[j,2] + vy[1,j]*B_bot[j,3]</p>
+</dd>
+<dt>B_left<span class="classifier">ARRAY</span></dt><dd><p>Boundary conditions at the left of the grid. Array has 4 columns, 
+values in each are defined as: 
+vx[0,i] = B_left[i,0] + vx[1,i]*B_left[i,1]
+vy[0,i] = B_left[j,2] + vy[1,i]*B_left[i,3]</p>
+</dd>
+<dt>B_right<span class="classifier">ARRAY</span></dt><dd><p>Boundary conditions at the left of the grid. Array has 4 columns, 
+values in each are defined as: 
+vx[0,i] = B_right[i,0] + vx[1,i]*B_right[i,1]
+vy[0,i] = B_right[j,2] + vy[1,i]*B_right[i,3]</p>
+</dd>
+<dt>B_intern<span class="classifier">ARRAY</span></dt><dd><p>Array defining optional internal boundary eg. moving wall. Format is:
+B_intern[0] = x-index of vx nodes with prescribed velocity (-1 is not in use)
+B_intern[1-2] = min/max y-index of the wall
+B_intern[3] = prescribed x-velocity value.
+B_intern[4] = x-index of vy nodes with prescribed velocity (-1 is not in use)
+B_intern[5-6] = min/max y-index of the wall
+B_intern[7] = prescribed y-velocity value.</p>
+</dd>
+</dl>
+</section>
+<section id="returns">
+<h2>Returns<a class="headerlink" href="#returns" title="Link to this heading">¶</a></h2>
+<dl class="simple">
+<dt>vx<span class="classifier">ARRAY</span></dt><dd><p>Calculated vx values.</p>
+</dd>
+<dt>vy<span class="classifier">ARRAY</span></dt><dd><p>Calculated vy values.</p>
+</dd>
+<dt>P<span class="classifier">ARRAY</span></dt><dd><p>Calculated pressure values.</p>
+</dd>
+<dt>resx<span class="classifier">ARRAY</span></dt><dd><p>residuals for the vx component.</p>
+</dd>
+<dt>resy<span class="classifier">ARRAY</span></dt><dd><p>residuals for the vy component.</p>
+</dd>
+<dt>resc<span class="classifier">ARRAY</span></dt><dd><p>residuals for the continuity eqn.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Modelling Earth Systems</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../setup.html">Setting up a model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../run.html">Running your model</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="dataStructures.html">dataStructures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="physics.markers_fns.html">physics.markers_fns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="physics.grid_fns.html">physics.grid_fns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="physics.markerUtils.html">physics.markerUtils</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="physics.StokesContinuitySolver.html">physics.StokesContinuitySolver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="physics.TemperatureSolver.html">physics.TemperatureSolver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="visualisation.html">visualisation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="models.lithosphereExtension.setup.html">models.lithosphereExtension.setup</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../api.html">API</a><ul>
+  <li><a href="physics.StokesContinuitySolver.html">physics.StokesContinuitySolver</a><ul>
+      <li>Previous: <a href="physics.StokesContinuitySolver.StokesConstructMatrix.html" title="previous chapter">physics.StokesContinuitySolver.StokesConstructMatrix</a></li>
+      <li>Next: <a href="physics.StokesContinuitySolver.calculateResiduals.html" title="next chapter">physics.StokesContinuitySolver.calculateResiduals</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Charlotte Summers.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../_sources/generated/physics.StokesContinuitySolver.StokesContinuitySolver.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

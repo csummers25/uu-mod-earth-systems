@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>models.lithosphereExtension.setup.initializeModel &#8212; Modelling Earth Systems 0.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d1102ebc" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=27fed22d" />
+    <script src="../_static/documentation_options.js?v=2709fde1"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="models.lithosphereExtension.setup.initialize_markers" href="models.lithosphereExtension.setup.initialize_markers.html" />
+    <link rel="prev" title="models.lithosphereExtension.setup.gridSpacings" href="models.lithosphereExtension.setup.gridSpacings.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="models-lithosphereextension-setup-initializemodel">
+<h1>models.lithosphereExtension.setup.initializeModel<a class="headerlink" href="#models-lithosphereextension-setup-initializemodel" title="Link to this heading">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="models.lithosphereExtension.setup.initializeModel">
+<span class="sig-prename descclassname"><span class="pre">models.lithosphereExtension.setup.</span></span><span class="sig-name descname"><span class="pre">initializeModel</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#models.lithosphereExtension.setup.initializeModel" title="Link to this definition">¶</a></dt>
+<dd><p>Sets up the initial state of the model, including BCs and output settings.</p>
+<section id="returns">
+<h2>Returns<a class="headerlink" href="#returns" title="Link to this heading">¶</a></h2>
+<dl class="simple">
+<dt>params<span class="classifier">Parameters object</span></dt><dd><p>Model physical and numerical parameters.</p>
+</dd>
+<dt>grid<span class="classifier">Grid object</span></dt><dd><p>Initialised Grid object.</p>
+</dd>
+<dt>materials<span class="classifier">Materials</span></dt><dd><p>Materials object initialsed with required material properties.</p>
+</dd>
+<dt>markers<span class="classifier">Markers</span></dt><dd><p>Initialized markers object.</p>
+</dd>
+<dt>xsize<span class="classifier">INT</span></dt><dd><p>x-resolution of model domain.</p>
+</dd>
+<dt>ysize<span class="classifier">INT</span></dt><dd><p>y-resolution of model domain.</p>
+</dd>
+<dt>P_first<span class="classifier">ARRAY</span></dt><dd><p>Array with 2 entries, specifying pressure BC.</p>
+</dd>
+<dt>B_top<span class="classifier">ARRAY</span></dt><dd><p>Boundary conditions at the top of the grid. Array has 4 columns, 
+values in each are defined as: 
+vx[0,j] = B_top[j,0] + vx[1,j]*B_top[j,1]
+vy[0,j] = B_top[j,2] + vy[1,j]*B_top[j,3]</p>
+</dd>
+<dt>B_bottom<span class="classifier">ARRAY</span></dt><dd><p>Boundary conditions at the bottom of the grid. Array has 4 columns, 
+values in each are defined as: 
+vx[0,j] = B_bot[j,0] + vx[1,j]*B_bot[j,1]
+vy[0,j] = B_bot[j,2] + vy[1,j]*B_bot[j,3]</p>
+</dd>
+<dt>B_left<span class="classifier">ARRAY</span></dt><dd><p>Boundary conditions at the left of the grid. Array has 4 columns, 
+values in each are defined as: 
+vx[0,i] = B_left[i,0] + vx[1,i]*B_left[i,1]
+vy[0,i] = B_left[j,2] + vy[1,i]*B_left[i,3]</p>
+</dd>
+<dt>B_right<span class="classifier">ARRAY</span></dt><dd><p>Boundary conditions at the left of the grid. Array has 4 columns, 
+values in each are defined as: 
+vx[0,i] = B_right[i,0] + vx[1,i]*B_right[i,1]
+vy[0,i] = B_right[j,2] + vy[1,i]*B_right[i,3]</p>
+</dd>
+<dt>B_intern<span class="classifier">ARRAY</span></dt><dd><p>Array defining optional internal boundary eg. moving wall. Format is:
+B_intern[0] = x-index of vx nodes with prescribed velocity (-1 is not in use)
+B_intern[1-2] = min/max y-index of the wall
+B_intern[3] = prescribed x-velocity value.
+B_intern[4] = x-index of vy nodes with prescribed velocity (-1 is not in use)
+B_intern[5-6] = min/max y-index of the wall
+B_intern[7] = prescribed y-velocity value.</p>
+</dd>
+<dt>BT_top<span class="classifier">ARRAY</span></dt><dd><p>Top temperature BCs.  Array has 2 columns, values in each are defined as:
+T[i,j] = BT_top[0] + BT_top[1]*T[i+1,j]</p>
+</dd>
+<dt>BT_bottom<span class="classifier">ARRAY</span></dt><dd><p>Bottom temperature BCs.  Array has 2 columns, values in each are defined as:
+T[i,j] = BT_bottom[0] + BT_bottom[1]*T[i-1,j]</p>
+</dd>
+<dt>BT_left<span class="classifier">ARRAY</span></dt><dd><p>Left temperature BCs.  Array has 2 columns, values in each are defined as:
+T[i,j] = BT_left[0] + BT_left[1]*T[i,j+1]</p>
+</dd>
+<dt>BT_right<span class="classifier">ARRAY</span></dt><dd><p>Right temperature BCs.  Array has 2 columns, values in each are defined as:
+T[i,j] = BT_right[0] + BT_right[1]*T[i,j-1]</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Modelling Earth Systems</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../setup.html">Setting up a model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../run.html">Running your model</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="dataStructures.html">dataStructures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="physics.markers_fns.html">physics.markers_fns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="physics.grid_fns.html">physics.grid_fns</a></li>
+<li class="toctree-l2"><a class="reference internal" href="physics.markerUtils.html">physics.markerUtils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="physics.StokesContinuitySolver.html">physics.StokesContinuitySolver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="physics.TemperatureSolver.html">physics.TemperatureSolver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="visualisation.html">visualisation</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="models.lithosphereExtension.setup.html">models.lithosphereExtension.setup</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../api.html">API</a><ul>
+  <li><a href="models.lithosphereExtension.setup.html">models.lithosphereExtension.setup</a><ul>
+      <li>Previous: <a href="models.lithosphereExtension.setup.gridSpacings.html" title="previous chapter">models.lithosphereExtension.setup.gridSpacings</a></li>
+      <li>Next: <a href="models.lithosphereExtension.setup.initialize_markers.html" title="next chapter">models.lithosphereExtension.setup.initialize_markers</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Charlotte Summers.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../_sources/generated/models.lithosphereExtension.setup.initializeModel.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

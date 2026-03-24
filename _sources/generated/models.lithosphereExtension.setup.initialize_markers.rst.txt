@@ -1,0 +1,6 @@
+models.lithosphereExtension.setup.initialize\_markers
+=====================================================
+
+.. currentmodule:: models.lithosphereExtension.setup
+
+.. autofunction:: initialize_markers

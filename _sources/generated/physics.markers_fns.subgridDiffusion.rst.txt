@@ -1,0 +1,6 @@
+physics.markers\_fns.subgridDiffusion
+=====================================
+
+.. currentmodule:: physics.markers_fns
+
+.. autofunction:: subgridDiffusion

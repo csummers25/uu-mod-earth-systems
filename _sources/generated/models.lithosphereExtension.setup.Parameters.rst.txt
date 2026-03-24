@@ -1,0 +1,31 @@
+models.lithosphereExtension.setup.Parameters
+============================================
+
+.. currentmodule:: models.lithosphereExtension.setup
+
+.. autoclass:: Parameters
+   :members:
+   :show-inheritance:
+   :inherited-members:
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~Parameters.__init__
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Parameters.class_type
+   
+   

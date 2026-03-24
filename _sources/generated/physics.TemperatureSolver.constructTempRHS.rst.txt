@@ -1,0 +1,6 @@
+physics.TemperatureSolver.constructTempRHS
+==========================================
+
+.. currentmodule:: physics.TemperatureSolver
+
+.. autofunction:: constructTempRHS
