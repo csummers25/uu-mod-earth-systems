@@ -14,7 +14,7 @@ from solver.physics.grid_fns import basicGridVelocities
 ###############################################################################
 # fns for plotting from the Grid
 
-def plotTemperature(grid, params, ntstp, t_curr, xlims, ylims, 
+def plotTemperature(grid, params, ntstp, t_curr, xlims, ylims, title,
                     aspect_ratio=None, height=None, plot_vel_arrows=False, arrow_stp = 5, Tmin=0.0, Tmax=1400.0):
     '''
     Plot a single variable as a colormap, here it is the temperature but this serves as 
@@ -31,6 +31,12 @@ def plotTemperature(grid, params, ntstp, t_curr, xlims, ylims,
         Current timestep number.
     t_curr : FLOAT
         Current time (s).
+    xlims : TUPLE
+        Limits of plotting area in the x-direction.
+    ylims : TUPLE
+        Limits of plotting area in the y-direction.
+    title : STR
+        Title to give to plot.
     aspect_ratio : FLOAT (OPTIONAL)
         Option to manually set the aspect ratio of the plots.
     height : FLOAT (OPTIONAL)
@@ -93,13 +99,13 @@ def plotTemperature(grid, params, ntstp, t_curr, xlims, ylims,
     axs.set_title('Temperature (C)')                                             # set plot title
     axs.set(ylabel='y (m)', xlabel='x (m)', xlim=xlims, ylim=ylims)  # label the y-axis and x-axis
     #axs.invert_yaxis() 
-    fig.suptitle('Time: %.3f Myr'%(t_curr*1e-6/(365.25*24*3600)))
+    fig.suptitle(title)
     
     # save to file 
     fig.savefig('%s/%s/temp_%i.png'%(params.output_path, params.output_name, ntstp))
 
 
-def plotSummary(grid, params, ntstp, t_curr, xlims, ylims,
+def plotSummary(grid, params, ntstp, t_curr, xlims, ylims, title,
                 aspect_ratio=None, plotTempContours=False, temp_levels=None,
                 rhomin=2200, rhomax=3500, vmin=18, vmax=28, Pmin=1.0e8, Pmax=.09e9):
     '''
@@ -116,6 +122,12 @@ def plotSummary(grid, params, ntstp, t_curr, xlims, ylims,
         Current timestep number.
     t_curr : FLOAT
         Current time (s).
+    xlims : TUPLE
+        Limits of plotting area in the x-direction.
+    ylims : TUPLE
+        Limits of plotting area in the y-direction.
+    title : STR
+        Title to give to plot.
     aspect_ratio : FLOAT (OPTIONAL)
         Option to manually set the aspect ratio of the plots.
     plotTempContours : BOOL (OPTIONAL)
@@ -221,7 +233,7 @@ def plotSummary(grid, params, ntstp, t_curr, xlims, ylims,
         axs[2].clabel(cs, inline=True, fontsize=8, fmt='%d C')
 
 
-    fig.suptitle('Time: %.3f Myr'%(t_curr*1e-6/(365.25*24*3600)))
+    fig.suptitle(title)
     fig.savefig('%s/%s/summary_%i.png'%(params.output_path, params.output_name, ntstp))
     
 
@@ -354,8 +366,8 @@ def getMarkerField(mark_nums, markers_field):
 
 
 
-def plotMarkers_lithology(params, markers, grid, ntstp, t_curr, xlims, ylims, 
-                          aspect_ratio=None, height=None, plot_vel_arrows=False, title="Lithology"):
+def plotMarkers_lithology(params, markers, grid, ntstp, t_curr, xlims, ylims, title, xres, 
+                          aspect_ratio=None, height=None, plot_vel_arrows=False):
     '''
     Plot the lithology/material ID recorded by the markers.
 
@@ -375,14 +387,17 @@ def plotMarkers_lithology(params, markers, grid, ntstp, t_curr, xlims, ylims,
         Limits of plotting area in the x-direction.
     ylims : TUPLE
         Limits of plotting area in the y-direction.
+    title : STR
+        Title to give to plot.
+    xres : INT
+        Number of pixels in the x-direction (y is set from this according to ratio of xsize/ysize).
     aspect_ratio : FLOAT (OPTIONAL)
         Option to manually set the aspect ratio of the plots.
     height : FLOAT (OPTIONAL)
         Option to manually set height of an axis.
     plot_vel_arrows : BOOL (Optional)
         Option to plot velocity arrows on the image, default is False.
-    title : STR (OPTIONAL)
-        Title to give to plot. Default is "Lithology".
+    
     
     Returns
     -------
@@ -391,7 +406,7 @@ def plotMarkers_lithology(params, markers, grid, ntstp, t_curr, xlims, ylims,
     '''
 
     # get the mapping of markers to pixel positions
-    marker_map = getMarkerPixelGrid(params, markers, grid, 401)
+    marker_map = getMarkerPixelGrid(params, markers, grid, xres)
     mark_com = getMarkerField(marker_map, markers.id)
 
     # get aspect ratio
@@ -438,7 +453,7 @@ def plotMarkers_lithology(params, markers, grid, ntstp, t_curr, xlims, ylims,
         axs.quiver(X[::arrow_stp, ::arrow_stp], Y[::arrow_stp, ::arrow_stp],\
                       vxb[:grid.ynum,:][::arrow_stp, ::arrow_stp], np.flip(-vyb[:,:grid.xnum],0)[::arrow_stp, ::arrow_stp])	            
     
-    fig.suptitle('Time: %.3f Myr'%(t_curr*1e-6/(365.25*24*3600)))
+    fig.suptitle(title)
     fig.savefig('%s/%s/litho_%i.png'%(params.output_path, params.output_name, ntstp))
     
     

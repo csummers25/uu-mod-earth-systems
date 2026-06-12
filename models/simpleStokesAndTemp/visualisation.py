@@ -33,11 +33,14 @@ def makePlots(grid, markers, params, ntstp, t_curr):
     """
     xlims = (0,params.xsize)
     ylims = (params.ysize,0)
+    title = 'Time: %.3f Myr'%(t_curr*1e-6/(365.25*24*3600))
     
+    # resolution for the markers plots
+    xres = 401
     
-    plotSummary(grid, params, ntstp, t_curr, xlims, ylims, rhomin=3200, rhomax=3300, vmin=19, vmax=21)
-    plotMarkers_lithology(params, markers, grid, ntstp, t_curr, xlims, ylims, height=6)
-    plotTemperature(grid, params, ntstp, t_curr, xlims, ylims, height=6, Tmin=1000, Tmax=1100)
+    plotSummary(grid, params, ntstp, t_curr, xlims, ylims, title, rhomin=3200, rhomax=3300, vmin=19, vmax=21)
+    plotMarkers_lithology(params, markers, grid, ntstp, t_curr, xlims, ylims, title, xres, height=6)
+    plotTemperature(grid, params, ntstp, t_curr, xlims, ylims, title, height=6, Tmin=1000, Tmax=1100)
 
 
     
