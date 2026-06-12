@@ -12,7 +12,7 @@ from output.visualisation import getMarkerField, getMarkerPixelGrid, plotMarkers
 ###############################################################################
 # custom plotting routines
 
-def plotMarkers_stress(params, markers, grid, ntstp, t_curr):
+def plotMarkers_stress(params, markers, grid, ntstp, t_curr, xres):
     '''
     Plot the stress components recorded by the markers.
 
@@ -39,7 +39,7 @@ def plotMarkers_stress(params, markers, grid, ntstp, t_curr):
     ylims = (grid.y[-1], grid.y[0])
     
     # get the mapping of markers to pixel positions
-    marker_map = getMarkerPixelGrid(params, markers, grid, 401)
+    marker_map = getMarkerPixelGrid(params, markers, grid, xres)
     
     # get the specific fields we want here
     mark_sigmaxx = getMarkerField(marker_map, markers.sigmaxx)
@@ -97,7 +97,7 @@ def plotMarkers_stress(params, markers, grid, ntstp, t_curr):
 
 
     
-def plotMarkers_strain(params, markers, grid, ntstp, t_curr):
+def plotMarkers_strain(params, markers, grid, ntstp, t_curr, xres):
     '''
     Plot the strain components and accumulated strain recorded by the markers.
 
@@ -121,7 +121,7 @@ def plotMarkers_strain(params, markers, grid, ntstp, t_curr):
     '''
     
     # get the mapping of markers to pixel positions
-    marker_map = getMarkerPixelGrid(params, markers, grid, 401)
+    marker_map = getMarkerPixelGrid(params, markers, grid, xres)
 
     
     xlims = (grid.x[0], grid.x[-1])
@@ -224,9 +224,13 @@ def makePlots(grid, markers, params, ntstp, t_curr):
     """
     xlims = (grid.x[0], grid.x[-1])
     ylims = (grid.y[-1], grid.y[0])
+    title = 'Time: %.3f Myr'%(t_curr*1e-6/(365.25*24*3600))
     
-    plotTemperature(grid, params, ntstp, t_curr, xlims, ylims, aspect_ratio=3)
-    plotSummary(grid, params, ntstp, t_curr, xlims, ylims, aspect_ratio=3, plotTempContours=True, temp_levels=[100, 150, 350, 450, 1300])
-    plotMarkers_lithology(params, markers, grid, ntstp, t_curr, xlims, ylims, aspect_ratio=3)
-    plotMarkers_strain(params, markers, grid, ntstp, t_curr)
-    plotMarkers_stress(params, markers, grid, ntstp, t_curr)
+    # resolution for the markers plots
+    xres = 801
+    
+    plotTemperature(grid, params, ntstp, t_curr, xlims, ylims, title, aspect_ratio=3)
+    plotSummary(grid, params, ntstp, t_curr, xlims, ylims, title, aspect_ratio=3, plotTempContours=True, temp_levels=[100, 150, 350, 450, 1300])
+    plotMarkers_lithology(params, markers, grid, ntstp, t_curr, xlims, ylims, title, xres, aspect_ratio=3)
+    plotMarkers_strain(params, markers, grid, ntstp, t_curr, xres)
+    plotMarkers_stress(params, markers, grid, ntstp, t_curr, xres)
