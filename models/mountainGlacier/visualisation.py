@@ -4,18 +4,16 @@
 Visualisation routines for plotting code output
 
 """
+
 from matplotlib import figure
 import numpy as np
 
 from output.visualisation import getMarkerField, getMarkerPixelGrid, plotMarkers_lithology, plotSummary, plotTemperature
 
-import matplotlib.pyplot as plt
-from matplotlib.animation import FuncAnimation
-
 ###############################################################################
 # custom plotting routines
 
-def plotMarkers_stress(params, markers, grid, ntstp, t_curr):
+def plotMarkers_stress(params, markers, grid, ntstp, t_curr, xres):
     '''
     Plot the stress components recorded by the markers.
 
@@ -31,6 +29,8 @@ def plotMarkers_stress(params, markers, grid, ntstp, t_curr):
         Current timestep number.
     t_curr : FLOAT
         Current time (s).
+    xres : INT
+        Number of pixels in the x-direction (y is set from this according to ratio of xsize/ysize).
 
     Returns
     -------
@@ -42,7 +42,7 @@ def plotMarkers_stress(params, markers, grid, ntstp, t_curr):
     ylims = (grid.y[-1], grid.y[0])
     
     # get the mapping of markers to pixel positions
-    marker_map = getMarkerPixelGrid(params, markers, grid, 401)
+    marker_map = getMarkerPixelGrid(params, markers, grid, xres)
     
     # get the specific fields we want here
     mark_sigmaxx = getMarkerField(marker_map, markers.sigmaxx)
@@ -62,7 +62,7 @@ def plotMarkers_stress(params, markers, grid, ntstp, t_curr):
 
     ###########################################################################
     # plot the stress
-    im = axs[0].imshow(mark_sigmaii, origin='upper', aspect='auto', extent=box_size, vmin=0, vmax=1.2e5)             
+    im = axs[0].imshow(mark_sigmaii, origin='upper', aspect='auto', extent=box_size, vmin=0, vmax=1.75e5)             
     fig.colorbar(im, ax=axs[0],pad=0.0, extend='both')
     axs[0].set_title('$\\sigma_{ii}$ (Pa)')
     axs[0].set(ylabel='y (m)', xlim=xlims, ylim=ylims)
@@ -73,7 +73,7 @@ def plotMarkers_stress(params, markers, grid, ntstp, t_curr):
     
     ###########################################################################
     # plot normal stress components
-    im = axs[1].imshow(mark_sigmaxx, origin='upper', aspect='auto', extent=box_size, vmin=0, vmax=3.5e4)
+    im = axs[1].imshow(mark_sigmaxx, origin='upper', aspect='auto', extent=box_size, vmin=0, vmax=1e5)
     fig.colorbar(im, ax=axs[1],pad=0.0, extend='both') 
     axs[1].set_title('$\\sigma_{xx}$ (Pa)') 
     axs[1].set(ylabel = 'y (m)', xlim=xlims, ylim=ylims)
@@ -84,7 +84,7 @@ def plotMarkers_stress(params, markers, grid, ntstp, t_curr):
     
     ###########################################################################
     # plot shear stress components
-    im = axs[2].imshow(mark_sigmaxy, origin='upper', aspect='auto', extent=box_size, vmin=-6e4, vmax=5e4)
+    im = axs[2].imshow(mark_sigmaxy, origin='upper', aspect='auto', extent=box_size, vmin=-7e4, vmax=2e4)
     fig.colorbar(im, ax=axs[2],pad=0.0, extend='both')     
     axs[2].set_title('$\\sigma_{xy}$ (Pa)')
     axs[2].set(xlabel='x (m)', ylabel = 'y (m)', xlim=xlims, ylim=ylims)   
@@ -100,7 +100,7 @@ def plotMarkers_stress(params, markers, grid, ntstp, t_curr):
 
 
     
-def plotMarkers_strain(params, markers, grid, ntstp, t_curr):
+def plotMarkers_strain(params, markers, grid, ntstp, t_curr, xres):
     '''
     Plot the strain components and accumulated strain recorded by the markers.
 
@@ -116,6 +116,8 @@ def plotMarkers_strain(params, markers, grid, ntstp, t_curr):
         Current timestep number.
     t_curr : FLOAT
         Current time (s).
+    xres : INT
+        Number of pixels in the x-direction (y is set from this according to ratio of xsize/ysize).
 
     Returns
     -------
@@ -124,7 +126,7 @@ def plotMarkers_strain(params, markers, grid, ntstp, t_curr):
     '''
     
     # get the mapping of markers to pixel positions
-    marker_map = getMarkerPixelGrid(params, markers, grid, 401)
+    marker_map = getMarkerPixelGrid(params, markers, grid, xres)
 
     
     xlims = (grid.x[0], grid.x[-1])
@@ -143,7 +145,7 @@ def plotMarkers_strain(params, markers, grid, ntstp, t_curr):
     ###########################################################################
     # plot the normal strain rate components
     mark_epsxx = getMarkerField(marker_map, markers.epsxx)
-    im = axs[0].imshow(mark_epsxx, origin='upper', aspect='auto', extent=box_size, vmin=-2.5e-9, vmax=5e-9)
+    im = axs[0].imshow(mark_epsxx, origin='upper', aspect='auto', extent=box_size, vmin=-1e-9, vmax=1e-9)
     
     fig.colorbar(im, ax=axs[0],pad=0.0, extend='both')
     axs[0].set_title('$\\dot\\epsilon_{xx}$ (1/s)')
@@ -157,7 +159,7 @@ def plotMarkers_strain(params, markers, grid, ntstp, t_curr):
     ###########################################################################
     # plot the shear strain rate components
     mark_epsxy = getMarkerField(marker_map, markers.epsxy)
-    im = axs[1].imshow(mark_epsxy, origin='upper', aspect='auto', extent=box_size, vmin=-1e-8, vmax=1e-8)
+    im = axs[1].imshow(mark_epsxy, origin='upper', aspect='auto', extent=box_size, vmin=-1.25e-9, vmax=1.25e-9)
     
     fig.colorbar(im, ax=axs[1],pad=0.0, extend='both')
     axs[1].set_title('$\\dot\\epsilon_{xy}$ (1/s)')
@@ -171,7 +173,7 @@ def plotMarkers_strain(params, markers, grid, ntstp, t_curr):
     ###########################################################################
     # plot normal stress components
     mark_epsii = np.sqrt(mark_epsxy**2+mark_epsxy**2)
-    im = axs[2].imshow(mark_epsii, origin='upper', aspect='auto', extent=box_size, vmin=0e-9, vmax=5e-8)
+    im = axs[2].imshow(mark_epsii, origin='upper', aspect='auto', extent=box_size, vmin=0e-9, vmax=1e-9)
     
     fig.colorbar(im, ax=axs[2],pad=0.0, extend='both')
     axs[2].set_title('$\\dot \\epsilon_{ii}$ (1/s)')
@@ -185,7 +187,7 @@ def plotMarkers_strain(params, markers, grid, ntstp, t_curr):
     ###########################################################################
     # Plot accumulated strain
     mark_gii = getMarkerField(marker_map, markers.gII)
-    im = axs[3].imshow(np.log10(mark_gii), origin='upper', aspect='auto', extent=box_size, vmin=-2.5, vmax=2)
+    im = axs[3].imshow(np.log10(mark_gii), origin='upper', aspect='auto', extent=box_size, vmin=-5, vmax=1.5)
     
     fig.colorbar(im, ax=axs[3],pad=0.0, extend='both')
     axs[3].set_title('Total strain (log10)')
@@ -225,13 +227,17 @@ def makePlots(grid, markers, params, ntstp, t_curr):
     """
     xlims = (grid.x[0], grid.x[-1])
     ylims = (grid.y[-1], grid.y[0])
+    title = 'Time: %.3f yr'%(t_curr/(365.25*24*3600))
     
-    plotTemperature(grid, params, ntstp, t_curr, xlims, ylims, aspect_ratio=3, Tmin=-2.5, Tmax=7.5)
-    plotSummary(grid, params, ntstp, t_curr, xlims, ylims, aspect_ratio=3, plotTempContours=True, temp_levels=[-10, -5, 0, 5, 10, 25, 50, 100, 500],
-                rhomin=500, rhomax=1500, vmin=10, vmax=15, Pmin=0e6, Pmax=2.4e6)
-    plotMarkers_lithology(params, markers, grid, ntstp, t_curr, xlims, ylims, aspect_ratio=3)
-    plotMarkers_strain(params, markers, grid, ntstp, t_curr)
-    plotMarkers_stress(params, markers, grid, ntstp, t_curr)
+    # resolution for the markers plots
+    xres = 1300
+    
+    # plotTemperature(grid, params, ntstp, t_curr, xlims, ylims, title, aspect_ratio=3, Tmin=-2.5, Tmax=7.5)
+    plotSummary(grid, params, ntstp, t_curr, xlims, ylims, title, aspect_ratio=3, plotTempContours=True, temp_levels=[-10, -5, 0, 5, 10, 25, 50, 100, 500],
+                rhomin=500, rhomax=1500, vmin=13, vmax=16, Pmin=0e6, Pmax=2.4e6)
+    plotMarkers_lithology(params, markers, grid, ntstp, t_curr, xlims, ylims, title, xres, aspect_ratio=3)
+    plotMarkers_strain(params, markers, grid, ntstp, t_curr, xres)
+    plotMarkers_stress(params, markers, grid, ntstp, t_curr, xres)
     Plot_Vis_strain_stress(params, markers, grid, ntstp, t_curr, xlims, ylims, aspect_ratio=3, plotTempContours=True, temp_levels=[-10, -5, 0, 5, 10, 25, 50, 100, 500])
 
 def Plot_Vis_strain_stress(params, markers, grid, ntstp, t_curr, xlims, ylims, aspect_ratio=3, plotTempContours=True, temp_levels=[-10, -5, 0, 5, 10, 25, 50, 100, 500]):
@@ -291,7 +297,7 @@ def Plot_Vis_strain_stress(params, markers, grid, ntstp, t_curr, xlims, ylims, a
         raise ValueError("Plot temperature contours was set to true but no contour values were provided.  Please set temp_levels to a list of temperaure values at which contours should be plotted")
     
     # Viscosity
-    im = axs[0].pcolor(X, Y, np.log10(grid.eta_n),vmin=10, vmax=15)
+    im = axs[0].pcolor(X, Y, np.log10(grid.eta_n),vmin=13, vmax=16)
     fig.colorbar(im, ax=axs[0],pad=0.0)                 # display colorbar
     axs[0].set(ylabel='y (m)', xlim=xlims, ylim=ylims)                          # label the y-axis (shared axis for x)
     axs[0].set_title('Viscosity log10(Pa s)')           # set plot title
@@ -336,5 +342,5 @@ def Plot_Vis_strain_stress(params, markers, grid, ntstp, t_curr, xlims, ylims, a
         cs = axs[2].contour(X, Y, grid.T-273, levels=temp_levels, colors='w', linewidths=0.8)
         axs[2].clabel(cs, inline=True, fontsize=8, fmt='%d C')
 
-    fig.suptitle('Time: %.3f Myr'%(t_curr*1e-6/(365.25*24*3600)))
+    fig.suptitle('Time: %.3f yr'%(t_curr/(365.25*24*3600)))
     fig.savefig('%s/%s/allthree_%i.png'%(params.output_path, params.output_name, ntstp))

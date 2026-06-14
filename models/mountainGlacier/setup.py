@@ -154,27 +154,27 @@ def initialize_markers(markers, materials, params):
             # bedrock
             if markers.y[mm] >= mountain_slope_curve(markers.x[mm], params) or markers.y[mm] >= params.ysize-params.by:
                 markers.id[mm] = 1
-                markers.T[mm]  = 293   # 20 °C
+                markers.T[mm]  = 273   # 0 °C
             # Bump in the bedrock
             elif markers.x[mm] >= 1800 and markers.x[mm] <2200 and markers.y[mm] > -0.125*markers.x[mm]+550 or markers.x[mm] >=2200 and markers.x[mm] <2300 and markers.y[mm] > 275 or markers.x[mm] >=2300 and markers.x[mm]<2400 and markers.y[mm] > 0.25*markers.x[mm]-300:
                 markers.id[mm] = 1
-                markers.T[mm] = 293
+                markers.T[mm] = 273
             #Basal ice layer
             elif markers.y[mm] >= 300 and markers.y[mm] <= 325 or markers.x[mm] >=1800 and markers.x[mm] < 2200 and markers.y[mm] > -0.125*markers.x[mm]+537.5:
                     markers.id[mm] = 4
-                    markers.T[mm] = 273-15
+                    markers.T[mm] = 273-30
             elif markers.y[mm] >= glacier_surface_curve(markers.x[mm], params):
                 if (markers.y[mm] > 180 and markers.y[mm] <= 190) or (markers.y[mm] > 200 and markers.y[mm] <= 210) or (markers.y[mm] > 220 and markers.y[mm] <= 230) or (markers.y[mm] > 240 and markers.y[mm] <= 250) or (markers.y[mm]> 260 and markers.y[mm] <= 270):
                     markers.id[mm] = 3
-                    markers.T[mm] = 273-15
+                    markers.T[mm] = 273-30
                 else:
                     markers.id[mm] = 2
-                    markers.T[mm]  = 273-15   # -15°C
+                    markers.T[mm]  = 273-30   # -30°C
 
             # air         
             else: 
                 markers.id[mm] = 0 
-                markers.T[mm] = 273+10   # 10 °C
+                markers.T[mm] = 273   # 0 °C
 
             # update marker index
             mm +=1
@@ -357,7 +357,7 @@ class Parameters():
         # output options
         self.save_output = 50                   # number of steps between output files
         self.save_fig = 30                      # number of steps between figure output
-        self.output_name = "mountainGlacier/00refcoolbumpvtest"
+        self.output_name = "mountainGlacier/00reference"
         self.output_path = "../../Results/figures"
         
                 
@@ -375,5 +375,5 @@ class Parameters():
 
         self.viscbox = ViscBox(0)
 
-        self.T_top = 273+10 #                      # temperature at the top face of the model (K)
-        self.T_bot = 273+20 #                      # temperature at the bottom face of the model (K)
+        self.T_top = 273                           # temperature at the top face of the model (K)
+        self.T_bot = 273                           # temperature at the bottom face of the model (K)
