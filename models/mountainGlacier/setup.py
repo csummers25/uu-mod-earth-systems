@@ -160,7 +160,7 @@ def initialize_markers(markers, materials, params):
                 markers.id[mm] = 1
                 markers.T[mm] = 273
             #Basal ice layer
-            elif markers.y[mm] >= 300 and markers.y[mm] <= 325 or markers.x[mm] >=1800 and markers.x[mm] < 2200 and markers.y[mm] > -0.125*markers.x[mm]+537.5:
+            elif markers.y[mm] >= 300 and markers.y[mm] <= 325 and markers.x[mm] <= 2400 or markers.x[mm] >=1800 and markers.x[mm] < 2200 and markers.y[mm] > -0.125*markers.x[mm]+537.5:
                     markers.id[mm] = 4
                     markers.T[mm] = 273-30
             elif markers.y[mm] >= glacier_surface_curve(markers.x[mm], params):
@@ -334,8 +334,8 @@ class Parameters():
         self.v_ext = 2.0/(100*365.25*24*3600)   # extension velocity of the grid (cm/yr)
         
         # timestepping
-        self.t_end = 1000*365.25*24*3600*2        # end time
-        self.ntstp_max = 360*2                    # maximum number of timesteps
+        self.t_end = 1000*365.25*24*3600        # end time
+        self.ntstp_max = 360                    # maximum number of timesteps
         self.Temp_stp_max = 20                  # maximum number of temperature substeps
         
         self.tstp_max = 365.25*24*3600          # maximum timestep
