@@ -47,6 +47,9 @@ Setting up your conda environment
 
 The required packages for this code are listed in the ``environment.yml`` file, which can be used to create a Python virtual environment and install these dependencies in it.
 
+Using the terminal to create your environment
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 If you still have the terminal you used in the previous step open, navigate into the newly downloaded code file using
 
 .. code-block:: bash
