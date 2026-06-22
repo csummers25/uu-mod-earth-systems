@@ -248,21 +248,25 @@ def makePlots(grid, markers, params, ntstp, t_curr):
     xlims = (0,550e3)
     ylims = (300e3,0)
 
+    # resolution for the markers plots
+    xres = 801
+
+    title = 'Time: %.3f Myr'%(t_curr*1e-6/(365.25*24*3600))
+
     result = calculate_shear_zone_thickness(grid) 
-    plotTemperature(grid, params, ntstp, t_curr, xlims, ylims, aspect_ratio=3)
-    plotSummary(grid, params, ntstp, t_curr, xlims, ylims, aspect_ratio=3, plotTempContours=True, temp_levels=[10, 100, 150, 350, 450, 1300])
+    plotTemperature(grid, params, ntstp, t_curr, xlims, ylims, title, aspect_ratio=3)
+    plotSummary(grid, params, ntstp, t_curr, xlims, ylims, title, aspect_ratio=3, plotTempContours=True, temp_levels=[10, 100, 150, 350, 450, 1300])
     
     # To do: add the polyline_length to the lithology plot by adding: axs.plot(x_mt, y_mt) underneath line 435
-    plotMarkers_lithology(result, params, markers, grid, ntstp, t_curr, xlims, ylims, aspect_ratio=3)
-    plotMarkers_strain(params, markers, grid, ntstp, t_curr)
-    plotMarkers_stress(params, markers, grid, ntstp, t_curr)
+    plotMarkers_lithology(params, markers, grid, ntstp, t_curr, xlims, ylims, title, xres, aspect_ratio=3)
+    plotMarkers_strain(params, markers, grid, ntstp, t_curr, xres)
+    plotMarkers_stress(params, markers, grid, ntstp, t_curr, xres)
     time_myr = t_curr*1e-6/(365.25*24*3600)
     output_file = f"{params.output_path}/{params.output_name}/shear_zone_history.csv"
     with open(output_file, 'a') as f:
         if ntstp == 0:
             f.write("time_myr,polyline_length_m\n")
         f.write(f"{time_myr:.6f},{result['polyline_length']:.0f}\n")
-        
 
     
     
