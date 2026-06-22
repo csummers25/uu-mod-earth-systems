@@ -6,7 +6,7 @@ Here we give basic install instructions, but for more details on working with th
 
 ## Installation
 
-If you haven't already, made sure you have python 3 installed (you can do this by installing Anaconda [here](https://www.anaconda.com/download)).  The required python packages are listed in the `environment.yml` file, you will need to create a new environment using this file.  This can be done either within the Anaconda Navigator or through the command line.  
+If you haven't already, make sure you have python 3 installed (you can do this by installing Anaconda [here](https://www.anaconda.com/download)).  The required python packages are listed in the `environment.yml` file, you will need to create a new environment using this file.  This can be done either within the Anaconda Navigator or through the command line.  Both methods are explained below and in the [documentation](https://csummers25.github.io/uu-mod-earth-systems/index.html).
 
 ### Using Anaconda Navigator
 
