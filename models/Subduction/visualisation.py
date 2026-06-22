@@ -249,7 +249,7 @@ def makePlots(grid, markers, params, ntstp, t_curr):
     ylims = (300e3,0)
 
     result = calculate_shear_zone_thickness(grid) 
-    plotTemperature(grid, params, ntstp, t_curr, xlims2, ylims2, aspect_ratio=3)
+    plotTemperature(grid, params, ntstp, t_curr, xlims, ylims, aspect_ratio=3)
     plotSummary(grid, params, ntstp, t_curr, xlims, ylims, aspect_ratio=3, plotTempContours=True, temp_levels=[10, 100, 150, 350, 450, 1300])
     
     # To do: add the polyline_length to the lithology plot by adding: axs.plot(x_mt, y_mt) underneath line 435
