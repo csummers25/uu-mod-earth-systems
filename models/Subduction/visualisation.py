@@ -139,7 +139,7 @@ def plotMarkers_strain(params, markers, grid, ntstp, t_curr):
     
     fig.colorbar(im, ax=axs[0],pad=0.0)
     axs[0].set_title('$\\dot\\epsilon_{xx}$ (1/s)')
-    axs[0].set(ylabel='y (m)', xlim=(0e3, 880e3), ylim=(320e3, 0)) #550 - 300
+    axs[0].set(ylabel='y (m)', xlim=(0e3, 550e3), ylim=(300e3, 0)) #550 - 300
     
     #add temperature contours
     cs = axs[0].contour(X, Y, grid.T-273, levels=temp_levels, colors='w', linewidths=0.8)
@@ -153,7 +153,7 @@ def plotMarkers_strain(params, markers, grid, ntstp, t_curr):
     
     fig.colorbar(im, ax=axs[1],pad=0.0)
     axs[1].set_title('$\\dot\\epsilon_{xy}$ (1/s)')
-    axs[1].set(ylabel = 'y (m)', xlim=(0e3, 880e3), ylim=(320e3, 0))
+    axs[1].set(ylabel = 'y (m)', xlim=(0e3, 550e3), ylim=(300e3, 0))
     
     # add temperature contours
     cs = axs[1].contour(X, Y, grid.T-273, levels=temp_levels, colors='w', linewidths=0.8)
@@ -167,7 +167,7 @@ def plotMarkers_strain(params, markers, grid, ntstp, t_curr):
     
     fig.colorbar(im, ax=axs[2],pad=0.0)
     axs[2].set_title('$\\dot \\epsilon_{ii}$ (1/s)')
-    axs[2].set(ylabel='y (m)', xlim=(0e3, 880e3), ylim=(320e3, 0))
+    axs[2].set(ylabel='y (m)', xlim=(0e3, 550e3), ylim=(300e3, 0))
    
     # add temperature contours
     cs = axs[2].contour(X, Y, grid.T-273, levels=temp_levels, colors='w', linewidths=0.8)
@@ -181,7 +181,7 @@ def plotMarkers_strain(params, markers, grid, ntstp, t_curr):
     
     fig.colorbar(im, ax=axs[3],pad=0.0)
     axs[3].set_title('Total strain (log10)')
-    axs[3].set(xlabel='x (m)', ylabel = 'y (m)', xlim=(0e3, 880e3), ylim=(320e3, 0)) 
+    axs[3].set(xlabel='x (m)', ylabel = 'y (m)', xlim=(0e3, 550e3), ylim=(300e3, 0)) 
 
     # add temperature contours
     cs = axs[3].contour(X, Y, grid.T-273, levels=temp_levels, colors='w', linewidths=0.8)
