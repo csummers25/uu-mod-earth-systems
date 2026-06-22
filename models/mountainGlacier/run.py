@@ -15,6 +15,7 @@ import numpy as np ## added temp for max vels
 
 # internal imports
 sys.path.append("../../") # required so that we can find the central model code from here!
+print(sys.path) # for Windows: if it can't find solver, change path to "..\\..\\"
 from solver.dataStructures import Grid
 from solver.main import step
 from setup import initializeModel # updateGrid
