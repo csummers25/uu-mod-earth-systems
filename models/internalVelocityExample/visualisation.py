@@ -32,10 +32,12 @@ def makePlots(grid, markers, params, ntstp, t_curr):
     """
     xlims = (0,params.xsize)
     ylims = (params.ysize,0)
+    title = 'Time: %.3f Myr'%(t_curr*1e-6/(365.25*24*3600))
+    xres = 401
     
     
-    plotSummary(grid, params, ntstp, t_curr, xlims, ylims)
-    plotMarkers_lithology(params, markers, grid, ntstp, t_curr, xlims, ylims, height=6)
+    plotSummary(grid, params, ntstp, t_curr, xlims, ylims, title)
+    plotMarkers_lithology(params, markers, grid, ntstp, t_curr, xlims, ylims, title, xres, height=6)
     
     
     

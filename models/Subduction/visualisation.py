@@ -15,7 +15,7 @@ from output.visualisation import getMarkerField, getMarkerPixelGrid, plotMarkers
 ###############################################################################
 # custom plotting routines
 
-def plotMarkers_stress(params, markers, grid, ntstp, t_curr):
+def plotMarkers_stress(params, markers, grid, ntstp, t_curr, xres):
     '''
     Plot the stress components recorded by the markers.
 
@@ -31,6 +31,8 @@ def plotMarkers_stress(params, markers, grid, ntstp, t_curr):
         Current timestep number.
     t_curr : FLOAT
         Current time (s).
+    xres : INT
+        Number of pixels in the x-direction (y is set from this according to ratio of xsize/ysize).
 
     Returns
     -------
@@ -39,7 +41,7 @@ def plotMarkers_stress(params, markers, grid, ntstp, t_curr):
     '''
     
     # get the mapping of markers to pixel positions
-    marker_map = getMarkerPixelGrid(params, markers, grid, 401)
+    marker_map = getMarkerPixelGrid(params, markers, grid, xres)
     
     # get the specific fields we want here
     mark_sigmaxx = getMarkerField(marker_map, markers.sigmaxx)
@@ -95,7 +97,7 @@ def plotMarkers_stress(params, markers, grid, ntstp, t_curr):
 
 
     
-def plotMarkers_strain(params, markers, grid, ntstp, t_curr):
+def plotMarkers_strain(params, markers, grid, ntstp, t_curr, xres):
     '''
     Plot the strain components and accumulated strain recorded by the markers.
 
@@ -111,6 +113,8 @@ def plotMarkers_strain(params, markers, grid, ntstp, t_curr):
         Current timestep number.
     t_curr : FLOAT
         Current time (s).
+    xres : INT
+        Number of pixels in the x-direction (y is set from this according to ratio of xsize/ysize).
 
     Returns
     -------
@@ -119,7 +123,7 @@ def plotMarkers_strain(params, markers, grid, ntstp, t_curr):
     '''
     
     # get the mapping of markers to pixel positions
-    marker_map = getMarkerPixelGrid(params, markers, grid, 401)
+    marker_map = getMarkerPixelGrid(params, markers, grid, xres)
 
     box_size = [0,params.xsize,params.ysize,0]
     

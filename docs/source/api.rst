@@ -1,6 +1,8 @@
 API
 ===
 
+The API (Application Programming Interface) is documented here.  It lists all the available functions and classes, with descriptions of what they do, what arguments they take and what they return.
+
 .. autosummary::
    :toctree: generated
    :template: custom_module.rst

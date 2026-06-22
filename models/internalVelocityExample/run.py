@@ -12,7 +12,7 @@ import os
 import sys
 
 # internal imports
-sys.path.append("../../") # required so that we can find the rest of the code from here!
+sys.path.append(os.path.abspath(os.path.join("..",".."))) # required so that we can find the central model code from here!
 from solver.dataStructures import Grid
 from solver.main import step
 from setup import initializeModel
