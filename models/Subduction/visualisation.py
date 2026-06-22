@@ -7,6 +7,8 @@ Visualisation routines for plotting code output
 
 from matplotlib import figure
 import numpy as np
+import os
+import csv 
 
 from output.visualisation import getMarkerField, getMarkerPixelGrid, plotMarkers_lithology, plotSummary, plotTemperature
 
@@ -55,7 +57,7 @@ def plotMarkers_stress(params, markers, grid, ntstp, t_curr, xres):
     
     # create image grid and temperature contour levels
     X, Y = np.meshgrid(grid.x, grid.y)
-    temp_levels = [100, 150, 350, 450, 1300]
+    temp_levels = [10, 100, 150, 350, 450, 1300]
 
     ###########################################################################
     # plot the stress
@@ -92,8 +94,6 @@ def plotMarkers_stress(params, markers, grid, ntstp, t_curr, xres):
 
     fig.suptitle('Time: %.3f Myr'%(t_curr*1e-6/(365.25*24*3600)))
     fig.savefig('%s/%s/stress_%i.png'%(params.output_path, params.output_name, ntstp))
-
-
 
 
     
@@ -134,7 +134,7 @@ def plotMarkers_strain(params, markers, grid, ntstp, t_curr, xres):
     
     # create image grid and temperature contour levels
     X, Y = np.meshgrid(grid.x, grid.y)
-    temp_levels = [100, 150, 350, 450, 1300]
+    temp_levels = [10, 100, 150, 350, 450, 1300]
 
     ###########################################################################
     # plot the normal strain rate components
@@ -143,7 +143,7 @@ def plotMarkers_strain(params, markers, grid, ntstp, t_curr, xres):
     
     fig.colorbar(im, ax=axs[0],pad=0.0)
     axs[0].set_title('$\\dot\\epsilon_{xx}$ (1/s)')
-    axs[0].set(ylabel='y (m)', xlim=(0e3, 550e3), ylim=(300e3, 0))
+    axs[0].set(ylabel='y (m)', xlim=(0e3, 550e3), ylim=(300e3, 0)) #550 - 300
     
     #add temperature contours
     cs = axs[0].contour(X, Y, grid.T-273, levels=temp_levels, colors='w', linewidths=0.8)
@@ -185,7 +185,7 @@ def plotMarkers_strain(params, markers, grid, ntstp, t_curr, xres):
     
     fig.colorbar(im, ax=axs[3],pad=0.0)
     axs[3].set_title('Total strain (log10)')
-    axs[3].set(xlabel='x (m)', ylabel = 'y (m)', xlim=(0e3, 500e3), ylim=(300e3, 0)) 
+    axs[3].set(xlabel='x (m)', ylabel = 'y (m)', xlim=(0e3, 550e3), ylim=(300e3, 0)) 
 
     # add temperature contours
     cs = axs[3].contour(X, Y, grid.T-273, levels=temp_levels, colors='w', linewidths=0.8)
@@ -195,6 +195,34 @@ def plotMarkers_strain(params, markers, grid, ntstp, t_curr, xres):
 
     fig.suptitle('Time: %.3f Myr'%(t_curr*1e-6/(365.25*24*3600)))
     fig.savefig('%s/%s/strain_%i.png'%(params.output_path, params.output_name, ntstp))
+
+
+
+def calculate_shear_zone_thickness(grid):
+    # Determine megathrust coordinates
+    x_mt = []
+    y_mt = []
+    for i in range(0,38):
+        x = np.argmax(grid.epsii[i,:])
+        if (grid.T[i,x] > 10+273 and grid.T[i,x]<450+273):
+            x_mt.append(grid.x[x])
+            y_mt.append(grid.y[i])
+
+    # Calculate seismogenic zone width
+    x_mt = np.array(x_mt)
+    y_mt = np.array(y_mt)
+    order = np.argsort(y_mt)
+    pts = np.vstack((x_mt[order], y_mt[order])).T
+    segs = np.diff(pts, axis=0)
+    seg_lengths = np.hypot(segs[:, 0], segs[:, 1])
+    polyline_length = float(np.sum(seg_lengths))
+
+    # Calculate moment magnitude using your emperical scaling relationship
+    # Do yourself
+
+    return {'x_mt' : x_mt,
+            'y_mt' : y_mt,
+            'polyline_length': polyline_length}
 
 
 
@@ -223,16 +251,26 @@ def makePlots(grid, markers, params, ntstp, t_curr):
     """
     xlims = (0,550e3)
     ylims = (300e3,0)
-    title = 'Time: %.3f Myr'%(t_curr*1e-6/(365.25*24*3600))
-    
+
     # resolution for the markers plots
     xres = 801
-    
+
+    title = 'Time: %.3f Myr'%(t_curr*1e-6/(365.25*24*3600))
+
+    result = calculate_shear_zone_thickness(grid) 
     plotTemperature(grid, params, ntstp, t_curr, xlims, ylims, title, aspect_ratio=3)
-    plotSummary(grid, params, ntstp, t_curr, xlims, ylims, title, aspect_ratio=3, plotTempContours=True, temp_levels=[100, 150, 350, 450, 1300])
+    plotSummary(grid, params, ntstp, t_curr, xlims, ylims, title, aspect_ratio=3, plotTempContours=True, temp_levels=[10, 100, 150, 350, 450, 1300])
+    
+    # To do: add the polyline_length to the lithology plot by adding: axs.plot(x_mt, y_mt) underneath line 435
     plotMarkers_lithology(params, markers, grid, ntstp, t_curr, xlims, ylims, title, xres, aspect_ratio=3)
     plotMarkers_strain(params, markers, grid, ntstp, t_curr, xres)
     plotMarkers_stress(params, markers, grid, ntstp, t_curr, xres)
+    time_myr = t_curr*1e-6/(365.25*24*3600)
+    output_file = f"{params.output_path}/{params.output_name}/shear_zone_history.csv"
+    with open(output_file, 'a') as f:
+        if ntstp == 0:
+            f.write("time_myr,polyline_length_m\n")
+        f.write(f"{time_myr:.6f},{result['polyline_length']:.0f}\n")
 
     
     
