@@ -412,6 +412,12 @@ def plotMarkers_lithology(params, markers, grid, ntstp, t_curr, xlims, ylims, ti
     # get aspect ratio
     xlen = abs(xlims[1] - xlims[0])
     ylen = abs(ylims[1] - ylims[0])
+
+    # get x, y vals for the pixel grid
+    x = np.linspace(grid.x[0], grid.x[-1], np.shape(mark_com)[1])
+    y = np.linspace(grid.y[0], grid.y[-1], np.shape(mark_com)[0])
+    XP, YP = np.meshgrid(x, y)
+
     
     if aspect_ratio == None:
         asp_rat = xlen/ylen
@@ -441,7 +447,7 @@ def plotMarkers_lithology(params, markers, grid, ntstp, t_curr, xlims, ylims, ti
     X, Y = np.meshgrid(grid.x, grid.y)
 
     # plot the lithology as colormap
-    im = axs.imshow(mark_com, origin='upper', aspect='auto', extent=[xlims[0], xlims[1], ylims[0],ylims[1]])
+    im = axs.pcolormesh(XP, YP, mark_com, shading='nearest')
     fig.colorbar(im, ax=axs,pad=0.0)
     axs.set_title(title) 
     axs.set(ylabel='y (m)', xlabel ='x (m)', xlim=xlims, ylim=ylims)               
