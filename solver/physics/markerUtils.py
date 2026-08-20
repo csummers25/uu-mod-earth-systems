@@ -95,6 +95,12 @@ def applyGridContrib(field, xn, yn, dxm, dym):
         The calulated marker value for the variable.
 
     '''
+    # check if we are going to step out of array 
+    # we shouldn't include contributions outside the grid so just raise an error 
+    mxi, mxj = np.shape(field)
+    if (xn >= mxj-1 or yn >= mxi-1):
+        raise IndexError("Attempt to include marker which is outside the grid")
+
     # add contibutions for 4 surrounding nodes
     fm = (1-dxm)*(1-dym)*field[yn, xn]
     fm += (1-dxm)*dym*field[yn+1, xn]
@@ -229,7 +235,6 @@ def findNearestNode(gridx, gridy, xnum, ynum, markerx, markery):
     elif (xn>xnum-2):
         xn = xnum-2
 
-    
     # do the same for the vertical index
     ynmin = 0
     ynmax = ynum-1
