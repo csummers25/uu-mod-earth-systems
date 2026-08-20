@@ -20,8 +20,6 @@ def applyMarkerContrib(field, m_field, dxm, dym, j, i, mwt, width=-1.0):
         The grid variable to be added to.
     m_field : FLOAT
         The marker value for the variable provided.
-    weights : ARRAY
-        The weighting functions for each of the surrounding nodes.
     i : INT
         y-index of the top-left node.
     j : INT
@@ -35,6 +33,7 @@ def applyMarkerContrib(field, m_field, dxm, dym, j, i, mwt, width=-1.0):
     width : FLOAT (Default=-1)
         The cell width around the node from which to apply the contribution, 
         if less than the whole zone.  Default is -1, which doesn't use this limiting.
+        Should be between 0 and 1.
         
 
     Returns
@@ -42,24 +41,34 @@ def applyMarkerContrib(field, m_field, dxm, dym, j, i, mwt, width=-1.0):
     None.
 
     '''
+    # check if we are going to step out of array
+    mxi, mxj = np.shape(field) 
+
     if (width > 0):
         if (dxm <= width and dym <= width):
             # i,j node
             field[i,j] += m_field*(1-dxm)*(1-dym)*mwt
-        if (dxm <= width and dym >= width):
-            # i+1, j node
-            field[i+1,j] += m_field*(1-dxm)*dym*mwt
-        if (dxm >= width and dym <= width):
-            # i, j+1 node
-            field[i,j+1] += m_field*dxm*(1-dym)*mwt
-        if (dxm >= width and dym >= width):
-            # i+1, j+1 node
-            field[i+1,j+1] += m_field*dxm*dym*mwt
+
+        if (i < mxi-1):
+            if (dxm <= width and (1-dym) <= width):
+                # i+1, j node
+                field[i+1,j] += m_field*(1-dxm)*dym*mwt
+        if (j < mxj-1):
+            if ((1-dxm) <= width and dym <= width):
+                # i, j+1 node
+                field[i,j+1] += m_field*dxm*(1-dym)*mwt
+        if (i < mxi-1 and j < mxj-1):
+            if ((1-dxm) <= width and (1-dym) <= width):
+                # i+1, j+1 node
+                field[i+1,j+1] += m_field*dxm*dym*mwt
     else:
         field[i,j] += m_field*(1-dxm)*(1-dym)*mwt
-        field[i+1,j] += m_field*(1-dxm)*dym*mwt
-        field[i,j+1] += m_field*dxm*(1-dym)*mwt
-        field[i+1,j+1] += m_field*dxm*dym*mwt
+        if (i < mxi-1):
+            field[i+1,j] += m_field*(1-dxm)*dym*mwt
+        if (j < mxj-1):
+            field[i,j+1] += m_field*dxm*(1-dym)*mwt
+        if (i < mxi-1 and j < mxj-1):
+            field[i+1,j+1] += m_field*dxm*dym*mwt
 
 @jit(nopython=True)
 def applyGridContrib(field, xn, yn, dxm, dym):
