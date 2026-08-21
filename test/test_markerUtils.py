@@ -8,7 +8,7 @@ currently tested:
  - applyMarkerContrib
  - applyGribContrib
  - findNearestNode
- - 
+ - getMarkerNodeDistance
 
 """
 
@@ -20,6 +20,7 @@ sys.path.append("../")
 import unittest
 import numpy as np
 from solver.physics.markerUtils import *
+from models.common import uniformGrid # maybe this should move?
 
 class TestApplyMarkerContrib(unittest.TestCase):
 
@@ -233,33 +234,38 @@ class TestFindNearestNode(unittest.TestCase):
         xn, yn = findNearestNode(gridx, gridy, xnum, ynum, 1.5, 1.5)
         self.assertEqual((xn, yn), (1, 1))
 
+    # we shouldn't be using markers outside the grid, so these cases should error!
     def test_marker_left_of_all_nodes(self):
         gridx = np.array([1, 2, 3, 4])
         gridy = np.array([1, 2, 3, 4])
         xnum, ynum = len(gridx), len(gridy)
-        xn, yn = findNearestNode(gridx, gridy, xnum, ynum, 0.5, 2)
-        self.assertEqual((xn, yn), (0, 1))
+        with self.assertRaises(IndexError):
+            xn, yn = findNearestNode(gridx, gridy, xnum, ynum, 0.5, 2)
+
 
     def test_marker_right_of_all_nodes(self):
         gridx = np.array([1, 2, 3, 4])
         gridy = np.array([1, 2, 3, 4])
         xnum, ynum = len(gridx), len(gridy)
-        xn, yn = findNearestNode(gridx, gridy, xnum, ynum, 4.5, 2)
-        self.assertEqual((xn, yn), (2, 1))
+        with self.assertRaises(IndexError):
+            xn, yn = findNearestNode(gridx, gridy, xnum, ynum, 4.5, 2)
+
 
     def test_marker_below_all_nodes(self):
         gridx = np.array([1, 2, 3, 4])
         gridy = np.array([1, 2, 3, 4])
         xnum, ynum = len(gridx), len(gridy)
-        xn, yn = findNearestNode(gridx, gridy, xnum, ynum, 2, 0.5)
-        self.assertEqual((xn, yn), (1, 0))
+        with self.assertRaises(IndexError):
+            xn, yn = findNearestNode(gridx, gridy, xnum, ynum, 2, 0.5)
+
 
     def test_marker_above_all_nodes(self):
         gridx = np.array([1, 2, 3, 4])
         gridy = np.array([1, 2, 3, 4])
         xnum, ynum = len(gridx), len(gridy)
-        xn, yn = findNearestNode(gridx, gridy, xnum, ynum, 2, 4.5)
-        self.assertEqual((xn, yn), (1, 2))
+        with self.assertRaises(IndexError):
+            xn, yn = findNearestNode(gridx, gridy, xnum, ynum, 2, 4.5)
+
 
     def test_non_uniform_grid_x(self):
         gridx = np.array([0, 0.5, 2, 3])
@@ -282,6 +288,128 @@ class TestFindNearestNode(unittest.TestCase):
         xn, yn = findNearestNode(gridx, gridy, xnum, ynum, 5.3, 3.7)
         self.assertEqual((xn, yn), (5, 3))
 
+################################################################### 
+class TestGetMarkerNodeDistances(unittest.TestCase):
+
+    def setUp(self):
+
+        # create 4x4 uniform grid with spacing 1
+        self.uni_grid = Grid(4, 4)
+        uniformGrid(self.uni_grid, 3, 3)
+
+        # create a 4x4 non-uniform grid
+        self.non_uni_grid = Grid(4,4)
+        self.non_uni_grid.x = np.array([0., 1., 3., 6.])
+        self.non_uni_grid.y = np.array([0., 2., 3., 5.])
+        self.non_uni_grid.set_spacings()
+        self.non_uni_grid.set_centered_nodes()
+        
+
+    # test basic node mode (node_type=0)
+    def test_basic_node_center(self):
+        """ marker in middle of two nodes """
+        dxm, dym, xn, yn = getMarkerNodeDistances(1.5, 1.5, 1, 1, self.uni_grid, 0)
+        self.assertEqual(xn, 1)
+        self.assertEqual(yn, 1)
+        self.assertAlmostEqual(dxm, 0.5)
+        self.assertAlmostEqual(dym, 0.5)
+
+    def test_basic_node_exact(self):
+        """ marker on top of node """
+        dxm, dym, xn, yn = getMarkerNodeDistances(1, 1, 1, 1, self.uni_grid, 0)
+        self.assertEqual(xn, 1)
+        self.assertEqual(yn, 1)
+        self.assertAlmostEqual(dxm, 0.0)
+        self.assertAlmostEqual(dym, 0.0)
+
+    def test_basic_node_off_left_edge(self):
+        """ marker off the lower x boundary """
+        with self.assertRaises(IndexError):
+            dxm, dym, xn, yn = getMarkerNodeDistances(-0.25, 1, 0, 1, self.uni_grid, 0)
+    
+
+    def test_basic_node_off_right_edge(self):
+        """ marker above upper x boundary """
+        with self.assertRaises(IndexError):
+            dxm, dym, xn, yn = getMarkerNodeDistances(3.2, 1.4, 3, 1, self.uni_grid, 0)
+
+    def test_wrong_xnode_data(self):
+        """ incorrect nearest x-node given """
+        with self.assertRaises(ValueError):
+            dxm, dym, xn, yn = getMarkerNodeDistances(2.2, 1.4, 0, 1, self.uni_grid, 0)
+
+    def test_wrong_ynode_data(self):
+        """ incorrect nearest y-node given """
+        with self.assertRaises(ValueError):
+            dxm, dym, xn, yn = getMarkerNodeDistances(2.2, 0.4, 2, 1, self.uni_grid, 0)
+
+    ###############################################################
+    # test with pressure nodes (node_type=1)
+    def test_pressure_node_center(self):
+        """ marker between pressure nodes """
+        dxm, dym, xn, yn = getMarkerNodeDistances(1.75, 1.75, 1, 1, self.uni_grid, 1)
+        self.assertEqual(xn, 2)
+        self.assertEqual(yn, 2)
+        self.assertAlmostEqual(dxm, 0.25)
+        self.assertAlmostEqual(dym, 0.25)
+
+    def test_pressure_node_off_center_xn(self):
+        """ marker off center, between pressure nodes """
+        dxm, dym, xn, yn = getMarkerNodeDistances(1.25, 1.75, 1, 1, self.uni_grid, 1)
+        self.assertEqual(xn, 1)
+        self.assertEqual(yn, 2)
+        self.assertAlmostEqual(dxm, 0.75)
+        self.assertAlmostEqual(dym, 0.25)
+
+    def test_pressure_node_xn_min(self):
+        """ correct node assignment at lower x-boundary """
+        dxm, dym, xn, yn = getMarkerNodeDistances(0.25, 1.75, 0, 1, self.uni_grid, 1)
+        self.assertEqual(xn, 0)
+        self.assertEqual(yn, 2)
+        self.assertAlmostEqual(dxm, 0.75)
+        self.assertAlmostEqual(dym, 0.25)
+
+    def test_pressure_node_xn_max(self):
+        """ correct node assignment at upper x-boundary """
+        dxm, dym, xn, yn = getMarkerNodeDistances(2.75, 1.75, 2, 1, self.uni_grid, 1)
+        self.assertEqual(xn, 3)
+        self.assertEqual(yn, 2)
+        self.assertAlmostEqual(dxm, 0.25)
+        self.assertAlmostEqual(dym, 0.25)
+
+    def test_pressure_node_yn_min(self):
+        """ correct node assignment at lower y-boundary """
+        dxm, dym, xn, yn = getMarkerNodeDistances(1.75, 0.25, 1, 0, self.uni_grid, 1)
+        self.assertEqual(xn, 2)
+        self.assertEqual(yn, 0)
+        self.assertAlmostEqual(dxm, 0.25)
+        self.assertAlmostEqual(dym, 0.75)
+
+    def test_pressure_node_yn_max(self):
+        """ correct node assignment at upper y-boundary """
+        dxm, dym, xn, yn = getMarkerNodeDistances(1.75, 2.75, 1, 2, self.uni_grid, 1)
+        self.assertEqual(xn, 2)
+        self.assertEqual(yn, 3)
+        self.assertAlmostEqual(dxm, 0.25)
+        self.assertAlmostEqual(dym, 0.25)
+
+    ##########################################################
+    # tests for non-uniform grid
+    def test_basic_node_non_uniform(self):
+        """ basic node distance on a non-uniform grid """
+        dxm, dym, xn, yn = getMarkerNodeDistances(2, 2.5, 1, 1, self.non_uni_grid, 0)
+        self.assertEqual(xn, 1)
+        self.assertEqual(yn, 1)
+        self.assertAlmostEqual(dxm, (2 - 1) / 2)
+        self.assertAlmostEqual(dym, (2.5 - 2) / 1)
+
+    def test_pressure_node_non_uniform(self):
+        """ pressure node distance on a non-uniform grid """
+        dxm, dym, xn, yn = getMarkerNodeDistances(2.5, 2.75, 1, 1, self.non_uni_grid, 1)
+        self.assertEqual(xn, 2)
+        self.assertEqual(yn, 2)
+        self.assertAlmostEqual(dxm, (2.5 - 2)/2.5)
+        self.assertAlmostEqual(dym, (2.75 - 2.5)/1.5)
 
 # run the tests!
 if __name__ == '__main__':

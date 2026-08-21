@@ -110,9 +110,10 @@ def applyGridContrib(field, xn, yn, dxm, dym):
     return fm
 
 @jit(nopython=True)    
-def getMarkerNodeDistances(markerx, markery, markernx, markerny, xnum, ynum, grid, node_type):
+def getMarkerNodeDistances(markerx, markery, markernx, markerny, grid, node_type):
     '''
-    Finds the distance to the nearest top-left node of a specified type for a given marker position.
+    Finds the distance to the nearest top-left node of a specified type for a given marker position,
+    normalised to the size of the grid cell.
 
     Parameters
     ----------
@@ -124,10 +125,6 @@ def getMarkerNodeDistances(markerx, markery, markernx, markerny, xnum, ynum, gri
         Last recorded nearest basic node x-index.
     markerny : INT
         Last recorded nearest basic node y-index.
-    xnum : INT
-        x resolution of grid.
-    ynum : INT
-        y resolution of grid.
     grid : Grid
         The grid object containing all grid variables.
     node_type : INT
@@ -136,16 +133,21 @@ def getMarkerNodeDistances(markerx, markery, markernx, markerny, xnum, ynum, gri
     Returns
     -------
     dxm : FLOAT
-        x-distance to the top-left node.
+        x-distance as fraction of grid cell to the top-left node.
     dym : FLOAT
-        y-distance to the top-left node.
+        y-distance as fraction of grid cell to the top-left node.
     xn : INT
         x-index of the top-left node.
     yn : INT
         y-index of the top-left node.
 
     '''
-    
+
+    # this function shouldn't receive markers outside the grid
+    # so an error is raised if this is the case
+    if (markerx < grid.x[0] or markerx > grid.x[-1] or markery < grid.y[0] or markery > grid.y[-1]):
+        raise IndexError("marker is outside grid, it should not be included in the calculation")
+        
     # get indicies of top-left node
     xn = markernx
     yn = markerny
@@ -155,33 +157,38 @@ def getMarkerNodeDistances(markerx, markery, markernx, markerny, xnum, ynum, gri
         # pressure node
         # horizontal index
         if (markerx < grid.cx[xn+1]):
-            xn = xn - 1
-    
+            xn = xn 
+        else:
+            xn = xn + 1
+
+        # calc the distance to the node
+        dxm = (markerx - grid.cx[xn])/grid.xstpc[xn]
+
+        # edges of the grid, adjust the indexing
         if (xn<0):
             xn = 0
-        
-        elif(xn>xnum-3):
-            xn = xnum - 3
-        
+
         # vertical index
         if (markery < grid.cy[yn+1]):
-            yn = yn - 1
-    
+            yn = yn
+        else:
+            yn = yn + 1
+
+        dym = (markery - grid.cy[yn])/grid.ystpc[yn]
+
+        # edges of the grid, adjust the indexing
         if (yn<0):
             yn = 0
-        
-        elif(yn>ynum-3):
-            yn = ynum - 3
-        
-    
-    # define the normalised distance from node
-    if (node_type==1):
-        # pressure nodes, use centered spacings
-        dxm = (markerx - grid.cx[xn+1])/grid.xstpc[xn+1]
-        dym = (markery - grid.cy[yn+1])/grid.ystpc[yn+1]
+
+
     else:
         dxm = (markerx - grid.x[xn])/grid.xstp[xn]
         dym = (markery - grid.y[yn])/grid.ystp[yn]
+
+    # sanity check, dxm, dym should be less than 1, if we 
+    # used the correct node data
+    if (dxm > 1 or dym > 1 or dxm < 0 or dym < 0):
+        raise ValueError("dxm or dym should be between 0 and 1, nearest node data is likely incorrect")
 
     return dxm, dym, xn, yn
 
@@ -213,6 +220,11 @@ def findNearestNode(gridx, gridy, xnum, ynum, markerx, markery):
         y-index of the top-left node.
 
     '''
+
+    # check to see if the marker is outside the grid
+    # raise an error if so
+    if (markerx < gridx[0] or markerx > gridx[-1] or markery < gridy[0] or markery > gridy[-1]):
+        raise IndexError("marker is outside grid, it should not be included in the calculation")
     
     # horizontal
     xnmin = 0
