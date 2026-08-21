@@ -6,19 +6,21 @@ common functions that can be used by many models
 
 """
 
-def uniformGrid(params, grid):
+def uniformGrid(grid, xsize, ysize):
     '''
-    Calculates the new grid spacings based on the current xsize and ysize.
+    Calculates the grid node positions and spacings.
     
-    This default version implements a fixed, uniform grid.
+    This default version implements a fixed, uniform grid, with x=0, y=0 as the starting point.
 
     Parameters
     ----------
-    params : Parameters Class
-        Parameters object containing all simulation parameters for the system.
     grid : OBJ
         The grid object into which the new node positions will be written.
-        
+    xsize : FLOAT
+        The physical size of the simulation domain in the x direction.
+    ysize : FLOAT
+        The physical size of the simulation domain in the y direction.   
+    
     Returns
     -------
     None.
@@ -29,8 +31,8 @@ def uniformGrid(params, grid):
     xnum = grid.xnum
     ynum = grid.ynum
     
-    dx = params.xsize/(xnum-1)
-    dy = params.ysize/(ynum-1)
+    dx = xsize/(xnum-1)
+    dy = ysize/(ynum-1)
     
     # Simple, uniform grid
     # horizontal grid
@@ -42,3 +44,9 @@ def uniformGrid(params, grid):
     grid.y[0] = 0
     for i in range(1,ynum):
         grid.y[i] = grid.y[i-1] + dy
+
+    # set the array of grid spacings with the new values
+    grid.set_spacings()
+
+    # also set the centered node positions + spacings
+    grid.set_centered_nodes()

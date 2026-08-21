@@ -102,28 +102,10 @@ def step(params, grid, materials, markers, BC, timestep, ntstp, grid0, debug):
     
     # compute the grid spacings for all nodes
     # grid steps for the basic nodes
-    grid.xstp = grid.x[1:] - grid.x[:-1]
-    grid.ystp = grid.y[1:] - grid.y[:-1]
+    grid.set_spacings()
     
-    # grid points for the center nodes
-    # horizontal
-    grid.cx[0] = grid.x[0] - grid.xstp[0]/2
-    grid.cx[1:xnum] = (grid.x[1:] + grid.x[:-1])/2
-    grid.cx[xnum] = grid.x[xnum-1] + grid.xstp[xnum-2]/2
-    # vertical
-    grid.cy[0] = grid.y[0] - grid.ystp[0]/2
-    grid.cy[1:ynum] = (grid.y[1:] + grid.y[:-1])/2
-    grid.cy[ynum] = grid.y[ynum-1] + grid.ystp[ynum-2]/2
-    
-    # grid spacing for center nodes
-    grid.xstpc[0] = grid.xstp[0]
-    grid.ystpc[0] = grid.ystp[0]
-    
-    grid.xstpc[xnum-1] = grid.xstp[xnum-2]
-    grid.ystpc[ynum-1] = grid.ystp[ynum-2]
-    
-    grid.xstpc[1:xnum-1] = (grid.x[2:] - grid.x[:xnum-2])/2
-    grid.ystpc[1:ynum-1] = (grid.y[2:] - grid.y[:ynum-2])/2
+    # grid points + spacings for the center nodes
+    grid.set_centered_nodes()
     
     if (debug):
         print('marker to grid interp.')

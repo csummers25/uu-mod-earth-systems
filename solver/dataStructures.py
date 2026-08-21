@@ -412,6 +412,47 @@ class Grid():
         # grid spacings
         self.xstpc = np.zeros((xnum))               # centered node x-spacing
         self.ystpc = np.zeros((ynum))               # centered node y-spacing
+
+    def set_spacings(self):
+        """
+        Updates the grid spacings based on the current node positions
+
+        Used in first setup of the grid and at each step for moving
+        grids.
+        
+        NOTE: see below about flags, also should this get called in setup,
+            so that we don't get confused about whether it was done?
+        
+        """
+
+        self.xstp = self.x[1:] - self.x[:-1]
+        self.ystp = self.y[1:] - self.y[:-1]
+
+
+    def set_centered_nodes(self):
+        """
+        Sets the current centre node positions and spacings, based on the
+        current primary node positions and spacings
+
+        Used in first setup of the grid and at each step for moving
+        grids.
+
+        NOTE: should we include a flag variable to indicate a moving grid?
+
+        """
+        # grid points for the center nodes
+        # horizontal
+        self.cx[0] = self.x[0] - self.xstp[0]/2
+        self.cx[1:self.xnum] = (self.x[1:] + self.x[:-1])/2
+        self.cx[self.xnum] = self.x[self.xnum-1] + self.xstp[self.xnum-2]/2
+        # vertical
+        self.cy[0] = self.y[0] - self.ystp[0]/2
+        self.cy[1:self.ynum] = (self.y[1:] + self.y[:-1])/2
+        self.cy[self.ynum] = self.y[self.ynum-1] + self.ystp[self.ynum-2]/2
+
+        # grid spacing for center nodes
+        self.xstpc = self.cx[1:] - self.cx[:-1]
+        self.ystpc = self.cy[1:] - self.cy[:-1]
         
 
 spec_vb = [
